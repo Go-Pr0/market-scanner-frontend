@@ -382,3 +382,24 @@ html {
     background-position: -200% 0;
   }
 }
+
+/* Loading Container for ProtectedRoute */
+.loading-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: var(--bg-primary);
+}
+
+.loading-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.loading-text {
+  color: var(--text-secondary);
+  font-size: 1rem;
+}

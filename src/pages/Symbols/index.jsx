@@ -22,12 +22,12 @@ function SymbolsPage() {
     addPage({ path: '/fully-diluted', title: 'FDV Scan', icon: '📈' });
   }, [addPage]);
 
-  // Coins array from backend payload
+  // API data
   const { data: fdvData, loading, error, refresh } = useFullyDilutedSymbols(threshold);
-  const coins = fdvData?.coins || [];
 
   // Filter and sort
   const filteredCoins = useMemo(() => {
+    const coins = fdvData?.coins || [];
     let data = coins.filter((c) =>
       c.symbol.toLowerCase().includes(searchTerm.toLowerCase()) ||
       c.id.toLowerCase().includes(searchTerm.toLowerCase())
@@ -44,7 +44,7 @@ function SymbolsPage() {
     });
 
     return data;
-  }, [coins, searchTerm, sortBy, sortOrder]);
+  }, [fdvData, searchTerm, sortBy, sortOrder]);
 
   // CSV export helper
   const exportData = () => {

@@ -7,4 +7,25 @@ const apiClient = axios.create({
   timeout: 10000, // 10 seconds timeout for all requests
 });
 
+export const setAuthToken = (token) => {
+  if (token) {
+    apiClient.defaults.headers.common['X-Access-Token'] = token;
+  } else {
+    delete apiClient.defaults.headers.common['X-Access-Token'];
+  }
+};
+
+// Add response interceptor to handle authentication errors
+apiClient.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 403) {
+      setAuthToken(null);
+      localStorage.removeItem('market-scanner-auth');
+      window.location.href = '/verify';
+    }
+    return Promise.reject(error);
+  }
+);
+
 export default apiClient; 

@@ -28,12 +28,8 @@ function TrendSpiderPage() {
     scanResults,
     runScan,
     runScanAndDownloadCsv,
-    fetchConfigurations,
     createConfig,
-    fetchActiveConfiguration,
-    setActiveConfig,
     clearError,
-    clearResults
   } = useTrendSpiderEma();
 
   // Local browser configs
@@ -51,10 +47,7 @@ function TrendSpiderPage() {
   ]);
 
   // UI state
-  const [availableSymbols] = useState([]);
   const [availableTimeframes] = useState(DEFAULT_TIMEFRAMES);
-  const [configurations, setConfigurations] = useState([]);
-  const [activeConfig, setActiveConfigName] = useState('');
   const [showConfigModal, setShowConfigModal] = useState(false);
   const [newConfigName, setNewConfigName] = useState('');
   const [transitioning, setTransitioning] = useState(false);
@@ -186,10 +179,6 @@ function TrendSpiderPage() {
       };
 
       await createConfig(configData);
-      
-      // Refresh configurations list
-      const configsData = await fetchConfigurations();
-      setConfigurations(configsData.configurations || []);
       
       setShowConfigModal(false);
       setNewConfigName('');

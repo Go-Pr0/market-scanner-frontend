@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import useHealthStatus from '../../hooks/useHealthStatus';
 import useApiStatus from '../../hooks/useApiStatus';
+import { useAuth } from '../../contexts/AuthContext';
 import './Header.css';
 
 function Header() {
@@ -11,6 +12,7 @@ function Header() {
   const [scrolled, setScrolled] = useState(false);
   const { data: healthData } = useHealthStatus();
   const { data: apiData } = useApiStatus();
+  const { logout } = useAuth();
 
   // Handle scroll effect
   useEffect(() => {
@@ -46,6 +48,11 @@ function Header() {
     setTimeout(() => {
       navigate(path);
     }, 200);
+  };
+
+  const handleLogout = () => {
+    logout();
+    navigate('/verify');
   };
 
   return (
@@ -100,6 +107,15 @@ function Header() {
               {(healthData?.status === 'healthy' && apiData?.status === 'active') ? 'Online' : 'Offline'}
             </span>
           </div>
+
+          {/* Logout Button */}
+          <button
+            className="logout-btn"
+            onClick={handleLogout}
+            title="Logout"
+          >
+            <span className="logout-icon">🚪</span>
+          </button>
 
           {/* Mobile Menu Toggle */}
           <button
