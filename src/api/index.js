@@ -14,11 +14,11 @@ export const getFullyDilutedSymbols = (threshold = 85) =>
 export const getMarketAnalysis = () => apiClient.get('/api/market/analysis');
 
 // TrendSpider EMA Scanner API endpoints
-export const runEmaScan = (scanRequest) => 
-  apiClient.post('/trendspider/scan', scanRequest);
+export const runEmaScan = (scanRequest) =>
+  apiClient.post('/trendspider/scan', scanRequest, { timeout: 60000 });
 
-export const runEmaScanCsv = (scanRequest) => 
-  apiClient.post('/trendspider/scan/csv', scanRequest, { responseType: 'blob' });
+export const runEmaScanCsv = (scanRequest) =>
+  apiClient.post('/trendspider/scan/csv', scanRequest, { responseType: 'blob', timeout: 60000 });
 
 export const getConfigurations = (userConfigs = true) => 
   apiClient.get('/trendspider/configurations', { params: { user_configs: userConfigs } });

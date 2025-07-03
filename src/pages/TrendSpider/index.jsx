@@ -3,7 +3,22 @@ import { Link } from 'react-router-dom';
 import Layout from '../../components/layout/Layout';
 import { useRecent } from '../../contexts/RecentContext';
 import useTrendSpiderEma from '../../hooks/useTrendSpiderEma';
+import useLocalConfigs from '../../hooks/useLocalConfigs';
 import './TrendSpider.css';
+
+// Static fallback for common TrendSpider timeframes to avoid initial API round-trip
+const DEFAULT_TIMEFRAMES = {
+  "1": "1 minute",
+  "5": "5 minutes",
+  "15": "15 minutes",
+  "30": "30 minutes",
+  "60": "1 hour",
+  "120": "2 hours",
+  "240": "4 hours",
+  "360": "6 hours",
+  "720": "12 hours",
+  "1440": "1 day"
+};
 
 function TrendSpiderPage() {
   const { addPage } = useRecent();
@@ -17,108 +32,71 @@ function TrendSpiderPage() {
     createConfig,
     fetchActiveConfiguration,
     setActiveConfig,
-    fetchAvailableSymbols,
-    fetchAvailableTimeframes,
     clearError,
     clearResults
   } = useTrendSpiderEma();
 
-  // Form state
-  const [formData, setFormData] = useState({
-    symbols: [],
-    timeframe: '240',
-    ema_periods: [50, 200],
-    filter_conditions: {},
-    sort_by: 'symbol',
-    show_only_matching: true,
-    batch_size: 4
-  });
+  // Local browser configs
+  const { configs: localConfigs, saveConfig: saveLocalConfig, deleteConfig: deleteLocalConfig } = useLocalConfigs();
+
+  // Form state - simplified
+  const [timeframe, setTimeframe] = useState('240');
+  const [emaConditions, setEmaConditions] = useState([
+    {
+      id: 1,
+      period: 50,
+      filter: { type: 'none', x: '', y: '' },
+      sortBy: 'symbol'
+    }
+  ]);
 
   // UI state
-  const [availableSymbols, setAvailableSymbols] = useState([]);
-  const [availableTimeframes, setAvailableTimeframes] = useState({});
+  const [availableSymbols] = useState([]);
+  const [availableTimeframes] = useState(DEFAULT_TIMEFRAMES);
   const [configurations, setConfigurations] = useState([]);
   const [activeConfig, setActiveConfigName] = useState('');
   const [showConfigModal, setShowConfigModal] = useState(false);
   const [newConfigName, setNewConfigName] = useState('');
-  const [symbolInput, setSymbolInput] = useState('');
-  const [emaPeriodInput, setEmaPeriodInput] = useState('');
   const [transitioning, setTransitioning] = useState(false);
+  const [nextId, setNextId] = useState(2);
+  const [showLocalMenu, setShowLocalMenu] = useState(false);
 
   // Track in recent pages
   useEffect(() => {
     addPage({ path: '/trendspider', title: 'EMA Scanner', icon: '📊' });
   }, [addPage]);
 
-  // Load initial data
-  useEffect(() => {
-    const loadInitialData = async () => {
-      try {
-        const [symbolsData, timeframesData, configsData, activeConfigData] = await Promise.all([
-          fetchAvailableSymbols(),
-          fetchAvailableTimeframes(),
-          fetchConfigurations(),
-          fetchActiveConfiguration()
-        ]);
+  // Handle EMA condition changes
+  const updateEmaCondition = (id, field, value, subfield = null) => {
+    setEmaConditions(prev =>
+      prev.map(condition => {
+        if (condition.id !== id) return condition;
+        if (field === 'filter') {
+          const newFilter = { ...condition.filter, [subfield]: value };
+          return { ...condition, filter: newFilter };
+        }
+        return { ...condition, [field]: value };
+      })
+    );
+  };
 
-        setAvailableSymbols(symbolsData.symbols || []);
-        setAvailableTimeframes(timeframesData.timeframes || {});
-        setConfigurations(configsData.configurations || []);
-        setActiveConfigName(activeConfigData.active_config || '');
-      } catch (err) {
-        console.error('Failed to load initial data:', err);
-      }
+  // Add new EMA condition
+  const addEmaCondition = () => {
+    const newCondition = {
+      id: nextId,
+      period: 200,
+      filter: { type: 'none', x: '', y: '' },
+      sortBy: 'symbol'
     };
-
-    loadInitialData();
-  }, [fetchAvailableSymbols, fetchAvailableTimeframes, fetchConfigurations, fetchActiveConfiguration]);
-
-  // Handle form changes
-  const handleFormChange = (field, value) => {
-    setFormData(prev => ({
-      ...prev,
-      [field]: value
-    }));
+    setEmaConditions(prev => [...prev, newCondition]);
+    setNextId(prev => prev + 1);
   };
 
-  // Handle symbol input
-  const handleAddSymbol = () => {
-    if (symbolInput.trim() && !formData.symbols.includes(symbolInput.trim().toUpperCase())) {
-      handleFormChange('symbols', [...formData.symbols, symbolInput.trim().toUpperCase()]);
-      setSymbolInput('');
+  // Remove EMA condition
+  const removeEmaCondition = (id) => {
+    if (emaConditions.length > 1) {
+      setEmaConditions(prev => prev.filter(condition => condition.id !== id));
     }
-  };
-
-  const handleRemoveSymbol = (symbol) => {
-    handleFormChange('symbols', formData.symbols.filter(s => s !== symbol));
-  };
-
-  // Handle EMA periods
-  const handleAddEmaPeriod = () => {
-    const period = parseInt(emaPeriodInput, 10);
-    if (period > 0 && !formData.ema_periods.includes(period) && formData.ema_periods.length < 5) {
-      handleFormChange('ema_periods', [...formData.ema_periods, period].sort((a, b) => a - b));
-      setEmaPeriodInput('');
-    }
-  };
-
-  const handleRemoveEmaPeriod = (period) => {
-    handleFormChange('ema_periods', formData.ema_periods.filter(p => p !== period));
-    // Remove filter condition for this period
-    const newFilterConditions = { ...formData.filter_conditions };
-    delete newFilterConditions[period.toString()];
-    handleFormChange('filter_conditions', newFilterConditions);
-  };
-
-  // Handle filter conditions
-  const handleFilterConditionChange = (period, condition) => {
-    const newFilterConditions = { ...formData.filter_conditions };
-    if (condition === 'none') {
-      delete newFilterConditions[period.toString()];
-    } else {
-      newFilterConditions[period.toString()] = condition;
-    }
-    handleFormChange('filter_conditions', newFilterConditions);
   };
 
   // Handle scan execution
@@ -127,9 +105,24 @@ function TrendSpiderPage() {
     clearError();
     
     try {
+      const ema_periods = emaConditions.map(c => c.period);
+      const filter_conditions = {};
+      
+      emaConditions.forEach(condition => {
+        const str = buildFilterString(condition.filter);
+        if (str) filter_conditions[condition.period.toString()] = str;
+      });
+
+      // Use the first condition's sort method as primary sort
+      const sort_by = emaConditions[0]?.sortBy || 'symbol';
+      
       const scanRequest = {
-        ...formData,
-        symbols: formData.symbols.length > 0 ? formData.symbols : undefined
+        timeframe,
+        ema_periods,
+        filter_conditions,
+        sort_by,
+        show_only_matching: true,
+        batch_size: 4
       };
       
       await runScan(scanRequest);
@@ -143,9 +136,23 @@ function TrendSpiderPage() {
   // Handle CSV export
   const handleExportCsv = async () => {
     try {
+      const ema_periods = emaConditions.map(c => c.period);
+      const filter_conditions = {};
+      
+      emaConditions.forEach(condition => {
+        const str = buildFilterString(condition.filter);
+        if (str) filter_conditions[condition.period.toString()] = str;
+      });
+
+      const sort_by = emaConditions[0]?.sortBy || 'symbol';
+      
       const scanRequest = {
-        ...formData,
-        symbols: formData.symbols.length > 0 ? formData.symbols : undefined
+        timeframe,
+        ema_periods,
+        filter_conditions,
+        sort_by,
+        show_only_matching: true,
+        batch_size: 4
       };
       
       await runScanAndDownloadCsv(scanRequest);
@@ -159,15 +166,21 @@ function TrendSpiderPage() {
     if (!newConfigName.trim()) return;
 
     try {
+      const filter_conditions = {};
+      emaConditions.forEach(condition => {
+        const str = buildFilterString(condition.filter);
+        if (str) filter_conditions[condition.period.toString()] = str;
+      });
+
       const configData = {
         name: newConfigName,
         config: {
-          TIMEFRAME: formData.timeframe,
-          EMA_PERIODS: formData.ema_periods,
-          FILTER_CONDITIONS: formData.filter_conditions,
-          SORT_BY: formData.sort_by,
-          SHOW_ONLY_MATCHING: formData.show_only_matching,
-          BATCH_SIZE: formData.batch_size
+          TIMEFRAME: timeframe,
+          EMA_PERIODS: emaConditions.map(c => c.period),
+          FILTER_CONDITIONS: filter_conditions,
+          SORT_BY: emaConditions[0]?.sortBy || 'symbol',
+          SHOW_ONLY_MATCHING: true,
+          BATCH_SIZE: 4
         },
         user_config: true
       };
@@ -180,9 +193,21 @@ function TrendSpiderPage() {
       
       setShowConfigModal(false);
       setNewConfigName('');
+
+      // also save to browser cache
+      saveLocalConfig(newConfigName, {
+        timeframe,
+        emaConditions
+      });
     } catch (err) {
       console.error('Failed to save configuration:', err);
     }
+  };
+
+  // Load local config
+  const loadLocalConfig = (payload) => {
+    setTimeframe(payload.timeframe);
+    setEmaConditions(payload.emaConditions);
   };
 
   // Format results for display
@@ -212,11 +237,47 @@ function TrendSpiderPage() {
     return `${pct > 0 ? '+' : ''}${pct.toFixed(2)}%`;
   };
 
-  // Get results to display
+  // Get results to display (always show only matching)
   const resultsToDisplay = useMemo(() => {
     if (!scanResults) return [];
-    return formData.show_only_matching ? scanResults.matching_results : scanResults.results;
-  }, [scanResults, formData.show_only_matching]);
+    return scanResults.matching_results || [];
+  }, [scanResults]);
+
+  // Get available sort options based on current EMA periods
+  const getSortOptions = () => {
+    const options = [
+      { value: 'symbol', label: 'Symbol' }
+    ];
+    
+    emaConditions.forEach(condition => {
+      options.push({
+        value: `percent_${condition.period}`,
+        label: `% from EMA ${condition.period}`
+      });
+    });
+    
+    return options;
+  };
+
+  // build filter string or null if incomplete/invalid
+  const buildFilterString = (filterObj) => {
+    const { type, x, y } = filterObj;
+    if (type === 'none') return null;
+    if (type === 'above' || type === 'below') return type;
+    if (type === 'near') {
+      if (!x && x !== 0) return null;
+      return `${type}:${x}`;
+    }
+    if (type === 'above_by' || type === 'below_by') {
+      if (!x && x !== 0) return null;
+      return `${type}:${x}`;
+    }
+    if (type === 'above_range' || type === 'below_range') {
+      if ((!x && x !== 0) || (!y && y !== 0)) return null;
+      return `${type === 'above_range' ? 'above_by' : 'below_by'}:${x}:${y}`;
+    }
+    return null;
+  };
 
   if (loading && !scanResults) {
     return (
@@ -278,7 +339,7 @@ function TrendSpiderPage() {
                     {scanResults.matching_symbols} matching
                   </>
                 ) : (
-                  'Configure and run EMA scans with advanced filtering'
+                  'Configure EMA conditions and run advanced technical analysis'
                 )}
               </p>
             </div>
@@ -299,162 +360,153 @@ function TrendSpiderPage() {
                 <span>Export CSV</span>
                 <span>📊</span>
               </button>
+              {/* Local config dropdown */}
+              <div className="local-config-wrapper" onBlur={()=>setShowLocalMenu(false)} tabIndex={-1}>
+                <button className="btn btn-secondary" onClick={()=>setShowLocalMenu(!showLocalMenu)}>
+                  <span>Configs</span> <span>📂</span>
+                </button>
+                {showLocalMenu && (
+                  <div className="local-config-menu">
+                    {localConfigs.length===0 && <div className="empty">No saved configs</div>}
+                    {localConfigs.map(c=> (
+                      <div key={c.name} className="config-item">
+                        <button className="load" onClick={()=>{loadLocalConfig(c.payload); setShowLocalMenu(false);}}>{c.name}</button>
+                        <button className="delete" onClick={()=>deleteLocalConfig(c.name)}>🗑</button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </section>
 
-        {/* Configuration Form */}
-        <section className={`config-section fade-block ${transitioning ? 'fade' : ''}`}>
-          <div className="config-grid">
-            {/* Timeframe Selection */}
-            <div className="config-group">
-              <label className="config-label">Timeframe</label>
+        {/* Configuration Playground */}
+        <section className={`config-playground fade-block ${transitioning ? 'fade' : ''}`}>
+          {/* Timeframe Selection at Top */}
+          <div className="timeframe-selector">
+            <label className="timeframe-label">Timeframe</label>
+            <div className="select-custom">
               <select
-                value={formData.timeframe}
-                onChange={(e) => handleFormChange('timeframe', e.target.value)}
-                className="config-select"
+                value={timeframe}
+                onChange={(e) => setTimeframe(e.target.value)}
+                className="timeframe-select"
               >
                 {Object.entries(availableTimeframes).map(([value, label]) => (
                   <option key={value} value={value}>{label}</option>
                 ))}
               </select>
             </div>
+          </div>
 
-            {/* Symbols */}
-            <div className="config-group">
-              <label className="config-label">Symbols (optional)</label>
-              <div className="symbol-input-container">
-                <input
-                  type="text"
-                  value={symbolInput}
-                  onChange={(e) => setSymbolInput(e.target.value.toUpperCase())}
-                  onKeyPress={(e) => e.key === 'Enter' && handleAddSymbol()}
-                  placeholder="Add symbol..."
-                  className="config-input"
-                />
-                <button 
-                  onClick={handleAddSymbol}
-                  className="btn btn-outline btn-small"
-                  disabled={!symbolInput.trim()}
-                >
-                  Add
-                </button>
-              </div>
-              <div className="symbol-tags">
-                {formData.symbols.map(symbol => (
-                  <span key={symbol} className="symbol-tag">
-                    {symbol}
-                    <button onClick={() => handleRemoveSymbol(symbol)}>×</button>
-                  </span>
-                ))}
-              </div>
-              {formData.symbols.length === 0 && (
-                <p className="config-hint">Leave empty to scan all available symbols</p>
-              )}
-            </div>
-
-            {/* EMA Periods */}
-            <div className="config-group">
-              <label className="config-label">EMA Periods (max 5)</label>
-              <div className="ema-input-container">
-                <input
-                  type="number"
-                  value={emaPeriodInput}
-                  onChange={(e) => setEmaPeriodInput(e.target.value)}
-                  onKeyPress={(e) => e.key === 'Enter' && handleAddEmaPeriod()}
-                  placeholder="Add period..."
-                  className="config-input"
-                  min="1"
-                />
-                <button 
-                  onClick={handleAddEmaPeriod}
-                  className="btn btn-outline btn-small"
-                  disabled={!emaPeriodInput || formData.ema_periods.length >= 5}
-                >
-                  Add
-                </button>
-              </div>
-              <div className="ema-periods">
-                {formData.ema_periods.map(period => (
-                  <span key={period} className="ema-period-tag">
-                    {period}
-                    <button onClick={() => handleRemoveEmaPeriod(period)}>×</button>
-                  </span>
-                ))}
-              </div>
-            </div>
-
-            {/* Filter Conditions */}
-            <div className="config-group">
-              <label className="config-label">Filter Conditions</label>
-              <div className="filter-conditions">
-                {formData.ema_periods.map(period => (
-                  <div key={period} className="filter-condition">
-                    <span className="filter-label">EMA {period}:</span>
-                    <select
-                      value={formData.filter_conditions[period.toString()] || 'none'}
-                      onChange={(e) => handleFilterConditionChange(period, e.target.value)}
-                      className="filter-select"
-                    >
-                      <option value="none">No filter</option>
-                      <option value="above">Price above EMA</option>
-                      <option value="below">Price below EMA</option>
-                    </select>
+          {/* EMA Condition Lines */}
+          <div className="ema-conditions">
+            {emaConditions.map((condition, index) => (
+              <div key={condition.id} className="ema-condition-line">
+                <div className="condition-content">
+                  {/* EMA Period */}
+                  <div className="condition-item">
+                    <label className="condition-label">EMA Period</label>
+                    <input
+                      type="number"
+                      value={condition.period}
+                      onChange={(e) => updateEmaCondition(condition.id, 'period', parseInt(e.target.value, 10) || 1)}
+                      className="condition-input"
+                      min="1"
+                      max="1000"
+                    />
                   </div>
-                ))}
-              </div>
-            </div>
 
-            {/* Sort Options */}
-            <div className="config-group">
-              <label className="config-label">Sort By</label>
-              <select
-                value={formData.sort_by}
-                onChange={(e) => handleFormChange('sort_by', e.target.value)}
-                className="config-select"
-              >
-                <option value="symbol">Symbol</option>
-                {formData.ema_periods.map(period => (
-                  <option key={period} value={`percent_${period}`}>
-                    % from EMA {period}
-                  </option>
-                ))}
-              </select>
-            </div>
+                  {/* Filter Condition */}
+                  <div className="condition-item">
+                    <label className="condition-label">Filter Condition</label>
+                    <div className="select-custom">
+                      <select
+                        value={condition.filter.type}
+                        onChange={(e) => updateEmaCondition(condition.id, 'filter', e.target.value, 'type')}
+                        className="condition-select"
+                      >
+                        <option value="none">No filter</option>
+                        <option value="above">Price above</option>
+                        <option value="below">Price below</option>
+                        <option value="above_by">Above by %</option>
+                        <option value="below_by">Below by %</option>
+                        <option value="above_range">Above in % zone</option>
+                        <option value="below_range">Below in % zone</option>
+                        <option value="near">Near EMA</option>
+                      </select>
+                    </div>
 
-            {/* Options */}
-            <div className="config-group">
-              <label className="config-label">Options</label>
-              <div className="config-options">
-                <label className="checkbox-label">
-                  <input
-                    type="checkbox"
-                    checked={formData.show_only_matching}
-                    onChange={(e) => handleFormChange('show_only_matching', e.target.checked)}
-                  />
-                  Show only matching results
-                </label>
-                <div className="batch-size-control">
-                  <label>Batch Size:</label>
-                  <input
-                    type="number"
-                    value={formData.batch_size}
-                    onChange={(e) => handleFormChange('batch_size', parseInt(e.target.value, 10))}
-                    min="1"
-                    max="10"
-                    className="batch-size-input"
-                  />
+                    {['above_by', 'below_by', 'near', 'above_range', 'below_range'].includes(condition.filter.type) && (
+                      <input
+                        type="number"
+                        className="condition-input small"
+                        placeholder="X%"
+                        value={condition.filter.x}
+                        onChange={(e) => updateEmaCondition(condition.id, 'filter', e.target.value, 'x')}
+                      />
+                    )}
+
+                    {['above_range', 'below_range'].includes(condition.filter.type) && (
+                      <input
+                        type="number"
+                        className="condition-input small"
+                        placeholder="Y%"
+                        value={condition.filter.y}
+                        onChange={(e) => updateEmaCondition(condition.id, 'filter', e.target.value, 'y')}
+                      />
+                    )}
+                  </div>
+
+                  {/* Sort Method */}
+                  <div className="condition-item">
+                    <label className="condition-label">Sort By</label>
+                    <div className="select-custom">
+                      <select
+                        value={condition.sortBy}
+                        onChange={(e) => updateEmaCondition(condition.id, 'sortBy', e.target.value)}
+                        className="condition-select"
+                      >
+                        {getSortOptions().map(option => (
+                          <option key={option.value} value={option.value}>
+                            {option.label}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
                 </div>
+
+                {/* Remove Button */}
+                {emaConditions.length > 1 && (
+                  <button
+                    className="remove-condition-btn"
+                    onClick={() => removeEmaCondition(condition.id)}
+                    title="Remove this EMA condition"
+                  >
+                    ×
+                  </button>
+                )}
               </div>
-            </div>
+            ))}
+
+            {/* Add New Condition Button */}
+            <button
+              className="add-condition-btn"
+              onClick={addEmaCondition}
+              disabled={emaConditions.length >= 5}
+            >
+              <span className="add-icon">+</span>
+              <span>Add EMA Condition</span>
+            </button>
           </div>
 
           {/* Run Scan Button */}
           <div className="scan-actions">
             <button 
-              className="btn btn-primary btn-large"
+              className="btn btn-primary btn-large scan-btn"
               onClick={handleRunScan}
-              disabled={loading || formData.ema_periods.length === 0}
+              disabled={loading || emaConditions.length === 0}
             >
               <span>{loading ? 'Scanning...' : 'Run EMA Scan'}</span>
               <span>🔍</span>
@@ -480,7 +532,7 @@ function TrendSpiderPage() {
               <h2 className="results-title">
                 Scan Results
                 <span className="results-count">
-                  ({resultsToDisplay.length} {formData.show_only_matching ? 'matching' : 'total'})
+                  ({resultsToDisplay.length} matching)
                 </span>
               </h2>
               <div className="results-info">
@@ -504,11 +556,11 @@ function TrendSpiderPage() {
                         <th>Symbol</th>
                         <th>Price</th>
                         <th>Volume</th>
-                        {formData.ema_periods.map(period => (
-                          <th key={period}>EMA {period}</th>
+                        {emaConditions.map(condition => (
+                          <th key={condition.id}>EMA {condition.period}</th>
                         ))}
-                        {formData.ema_periods.map(period => (
-                          <th key={period}>% from EMA {period}</th>
+                        {emaConditions.map(condition => (
+                          <th key={condition.id}>% from EMA {condition.period}</th>
                         ))}
                         <th>Candles</th>
                       </tr>
@@ -522,15 +574,15 @@ function TrendSpiderPage() {
                           </td>
                           <td>{formatPrice(result.price)}</td>
                           <td>{formatNumber(result.volume)}</td>
-                          {formData.ema_periods.map(period => (
-                            <td key={period}>{formatPrice(result.emas?.[period.toString()])}</td>
+                          {emaConditions.map(condition => (
+                            <td key={condition.id}>{formatPrice(result.emas?.[condition.period.toString()])}</td>
                           ))}
-                          {formData.ema_periods.map(period => (
-                            <td key={period} className={
-                              result.percent_from_ema?.[period.toString()] > 0 ? 'positive' : 
-                              result.percent_from_ema?.[period.toString()] < 0 ? 'negative' : ''
+                          {emaConditions.map(condition => (
+                            <td key={condition.id} className={
+                              result.percent_from_ema?.[condition.period.toString()] > 0 ? 'positive' :
+                              result.percent_from_ema?.[condition.period.toString()] < 0 ? 'negative' : ''
                             }>
-                              {formatPercent(result.percent_from_ema?.[period.toString()])}
+                              {formatPercent(result.percent_from_ema?.[condition.period.toString()])}
                             </td>
                           ))}
                           <td>{result.candles_available}</td>
