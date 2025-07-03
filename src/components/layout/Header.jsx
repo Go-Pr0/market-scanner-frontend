@@ -23,7 +23,9 @@ function Header() {
 
   const navItems = [
     { path: '/', label: 'Dashboard', icon: '🏠' },
-    // FDV-based scan (replaces previous Market Data)
+    // TrendSpider EMA Scanner - top priority
+    { path: '/trendspider', label: 'EMA Scanner', icon: '📊' },
+    // FDV-based scan
     { path: '/fully-diluted', label: 'FDV Scan', icon: '📈' },
     // Placeholder nav items for future pages can be re-added here when implemented.
   ];

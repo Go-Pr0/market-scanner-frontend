@@ -45,8 +45,14 @@ function Home() {
     }
   }, [highlightCards]);
 
-  // Dashboard cards representing backend endpoints. Only the first one is active for now.
+  // Dashboard cards representing backend endpoints
   const dashboardCards = [
+    {
+      title: 'EMA Scanner', // TrendSpider EMA scanner - top priority
+      subtitle: 'Technical Analysis',
+      icon: '📊',
+      path: '/trendspider',
+    },
     {
       title: 'FDV-based Scan', // Fully-diluted endpoint
       subtitle: 'FDV Scan',
@@ -56,10 +62,18 @@ function Home() {
     // TODO: Replace these placeholder objects with real endpoint pages when implemented.
     {},
     {},
-    {},
   ];
 
   const featureCards = [
+    // TrendSpider EMA Scanner card – fully implemented
+    {
+      title: 'EMA Scanner',
+      description: 'Advanced EMA analysis with configurable periods, filter conditions, and export capabilities. Perfect for technical analysis workflows.',
+      icon: '📊',
+      path: '/trendspider',
+      gradient: 'var(--accent-gradient)',
+      features: ['Multiple EMA Periods', 'Advanced Filtering', 'Configuration Management', 'CSV Export']
+    },
     // FDV Scanner card – fully implemented
     {
       title: 'FDV Scanner',
@@ -70,7 +84,6 @@ function Home() {
       features: ['Threshold Filtering', 'CSV Export', 'Real-time Data']
     },
     // Placeholders for upcoming features – empty objects will render as blank outline cards
-    {},
     {},
     {},
   ];
