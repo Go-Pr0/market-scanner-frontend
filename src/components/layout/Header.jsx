@@ -4,6 +4,7 @@ import useHealthStatus from '../../hooks/useHealthStatus';
 import useApiStatus from '../../hooks/useApiStatus';
 import { useAuth } from '../../contexts/AuthContext';
 import './Header.css';
+import EverbloomLogo from '../logo_images/full_logo_no_bg.png';
 
 function Header() {
   const location = useLocation();
@@ -61,11 +62,7 @@ function Header() {
         {/* Logo Section */}
         <div className="logo-section">
           <Link to="/" className="logo">
-            <div className="logo-icon">📊</div>
-            <div className="logo-text">
-              <span className="logo-title">Market Scanner</span>
-              <span className="logo-subtitle">Pro</span>
-            </div>
+            <img src={EverbloomLogo} alt="Everbloom Trading Portal" className="logo-image" />
           </Link>
         </div>
 

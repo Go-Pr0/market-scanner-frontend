@@ -48,8 +48,8 @@ function Home() {
   // Dashboard cards representing backend endpoints
   const dashboardCards = [
     {
-      title: 'EMA Scanner', // TrendSpider EMA scanner - top priority
-      subtitle: 'Technical Analysis',
+      title: 'EMA CENTERED SCANNER', // TrendSpider EMA scanner - top priority
+      subtitle: 'TrendSpider',
       icon: '📊',
       path: '/trendspider',
     },
@@ -76,7 +76,7 @@ function Home() {
     },
     // FDV Scanner card – fully implemented
     {
-      title: 'FDV Scanner',
+      title: 'TrendSpider',
       description: 'Analyze coins by Fully-Diluted Valuation. Filter by circulation %, export tickers, and stay ahead of supply unlocks.',
       icon: '📈',
       path: '/fully-diluted',

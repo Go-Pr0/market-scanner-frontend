@@ -1,4 +1,6 @@
 .site-header {
+  --logo-height: 60px;
+  --logo-scale: 1.5;
   position: sticky;
   top: 0;
   width: 100%;
@@ -39,41 +41,19 @@
   gap: var(--spacing-xs);
   text-decoration: none;
   color: var(--text-primary);
-  transition: all var(--transition-normal);
+  transition: transform var(--transition-normal);
+  transform: scale(var(--logo-scale));
 }
 
 .logo:hover {
-  transform: scale(1.05);
+  transform: scale(calc(var(--logo-scale) * 1.05));
 }
 
-.logo-icon {
-  font-size: 2rem;
-  filter: drop-shadow(0 0 10px rgba(100, 255, 218, 0.5));
-  /* floating animation disabled to keep icon static */
-  animation: none;
-}
-
-.logo-text {
-  display: flex;
-  flex-direction: column;
-  line-height: 1.2;
-}
-
-.logo-title {
-  font-size: 1.4rem;
-  font-weight: 700;
-  background: var(--primary-gradient);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.logo-subtitle {
-  font-size: 0.7rem;
-  color: var(--text-accent);
-  font-weight: 500;
-  letter-spacing: 1px;
-  text-transform: uppercase;
+.logo-image {
+  height: var(--logo-height);
+  width: auto;
+  object-fit: contain;
+  transition: height var(--transition-normal);
 }
 
 /* Navigation Menu */
