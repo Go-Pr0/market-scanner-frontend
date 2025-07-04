@@ -4,8 +4,11 @@ import Header from './Header';
 import Footer from './Footer';
 import './Layout.css';
 
+const FOOTER_HIDDEN_ROUTES = ['/trade-chat', '/trade-setup'];
+
 function Layout({ children, className = '' }) {
   const location = useLocation();
+  const showFooter = !FOOTER_HIDDEN_ROUTES.includes(location.pathname);
 
   // Fade-in on route change
   useEffect(() => {
@@ -35,7 +38,7 @@ function Layout({ children, className = '' }) {
       </main>
       
       {/* Footer - Always at bottom */}
-      <Footer />
+      {showFooter && <Footer />}
     </div>
   );
 }

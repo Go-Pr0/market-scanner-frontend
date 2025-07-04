@@ -114,8 +114,12 @@ function Home() {
       url: 'https://morning-tracker.vercel.app',
       external: true,
     },
-    // TODO: Replace these placeholder objects with real endpoint pages when implemented.
-    {},
+    {
+      title: 'AI TRADE ASSISTANT',
+      subtitle: 'Trade Assistant',
+      icon: '💬',
+      path: '/trade-chat',
+    },
   ];
 
   const featureCards = [
@@ -144,11 +148,17 @@ function Home() {
       icon: '🧭',
       url: 'https://morning-tracker.vercel.app',
       external: true,
-      gradient: 'var(--info-gradient)',
+      gradient: 'var(--warning-gradient)',
       features: ['Overall Bias Scores', 'Bias Tracking', 'Track History']
     },
-    // Placeholders for upcoming features – empty objects will render as blank outline cards
-    {},
+    {
+      title: 'Trade Assistant',
+      description: 'Engage in a conversational chat with an AI to plan your trades, analyze your strategy, and manage your positions.',
+      icon: '💬',
+      path: '/trade-chat',
+      gradient: 'var(--secondary-gradient)',
+      features: ['Pre-Trade Planning', 'Trade Management', 'Conversational AI', 'Strategy Review']
+    },
   ];
 
   // Live market overview data (auto-refreshes every 15 min)

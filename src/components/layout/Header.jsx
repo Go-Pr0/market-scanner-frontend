@@ -32,6 +32,8 @@ function Header() {
     { path: '/fully-diluted', label: 'FDV Scan', icon: '📈' },
     // Bias Tracker - external link
     { url: 'https://morning-tracker.vercel.app', label: 'Bias Tracker', icon: '🧭', external: true },
+    // Trade Planner Chat
+    { path: '/trade-chat', label: 'Trade Assistant', icon: '💬' },
     // Placeholder nav items for future pages can be re-added here when implemented.
   ];
 

@@ -1,0 +1,60 @@
+.trade-setup-container {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: var(--spacing-lg) var(--spacing-xl);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-xl);
+  margin-bottom: 20vh; /* Adds extra scrollable space at the bottom */
+}
+
+.questions-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+.question-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.question-label {
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: var(--spacing-xs);
+  font-size: 1rem;
+}
+
+.question-input {
+  min-height: 100px;
+  padding: var(--spacing-sm);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-md);
+  font-family: var(--font-primary);
+  font-size: 0.95rem;
+  resize: vertical;
+  transition: all var(--transition-normal);
+}
+
+.question-input:focus {
+  outline: none;
+  border-color: var(--text-accent);
+  box-shadow: 0 0 0 3px rgba(100, 255, 218, 0.2);
+}
+
+.actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: var(--spacing-md);
+}
+
+.error-text {
+  color: var(--danger-color, red);
+  background: rgba(239, 68, 68, 0.1);
+  padding: var(--spacing-sm);
+  border-radius: var(--radius-md);
+} 

@@ -46,3 +46,10 @@ export const getAvailableSymbols = () =>
 
 export const getAvailableTimeframes = () => 
   apiClient.get('/trendspider/timeframes'); 
+
+// Trade Planning System API endpoints
+export const generateTradeQuestions = (answered) =>
+  apiClient.post('/api/questions/generate', { answered });
+
+export const advisorChatMessage = (payload) =>
+  apiClient.post('/api/chat/advisor', payload); 

@@ -12,6 +12,8 @@ import Home from './pages/Home';
 import SymbolsPage from './pages/Symbols';
 import TrendSpiderPage from './pages/TrendSpider';
 import VerificationPage from './pages/Verification';
+import TradeSetupPage from './pages/TradeSetup';
+import TradeChatPage from './pages/TradeChat';
 
 function App() {
   return (
@@ -36,6 +38,16 @@ function App() {
             <Route path="/trendspider" element={
               <ProtectedRoute>
                 <TrendSpiderPage />
+              </ProtectedRoute>
+            } />
+            <Route path="/trade-setup" element={
+              <ProtectedRoute>
+                <TradeSetupPage />
+              </ProtectedRoute>
+            } />
+            <Route path="/trade-chat" element={
+              <ProtectedRoute>
+                <TradeChatPage />
               </ProtectedRoute>
             } />
           </Routes>
