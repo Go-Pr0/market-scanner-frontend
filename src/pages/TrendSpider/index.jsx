@@ -276,7 +276,7 @@ function TrendSpiderPage() {
             <div className="header-content">
               <div className="header-text">
                 <h1 className="page-title">
-                  <span className="text-gradient">EMA Scanner</span>
+                  <span className="text-gradient">TrendSpider</span>
                 </h1>
                 <p className="page-subtitle">Loading...</p>
               </div>
@@ -319,7 +319,7 @@ function TrendSpiderPage() {
           <div className="header-content">
             <div className="header-text">
               <h1 className="page-title">
-                <span className="text-gradient">EMA Scanner</span>
+                <span className="text-gradient">TrendSpider</span>
               </h1>
               <p className="page-subtitle">
                 {scanResults ? (

@@ -121,7 +121,7 @@ function Home() {
   const featureCards = [
     // TrendSpider EMA Scanner card – fully implemented
     {
-      title: 'EMA Scanner',
+      title: 'TrendSpider',
       description: 'Advanced EMA analysis with configurable periods, filter conditions, and export capabilities. Perfect for technical analysis workflows.',
       icon: '📊',
       path: '/trendspider',
@@ -145,7 +145,7 @@ function Home() {
       url: 'https://morning-tracker.vercel.app',
       external: true,
       gradient: 'var(--info-gradient)',
-      features: ['Bias Analysis', 'Performance Metrics', 'Trade Journaling', 'External Integration']
+      features: ['Overall Bias Scores', 'Bias Tracking', 'Track History']
     },
     // Placeholders for upcoming features – empty objects will render as blank outline cards
     {},
@@ -198,7 +198,7 @@ function Home() {
           <div className="hero-content">
             <div className="hero-text">
               <h1 className="hero-title">
-                <span className="text-gradient">Market Scanner</span>
+                <span className="text-gradient">Everbloom Trading Portal</span>
                 <span className="hero-subtitle">Professional</span>
               </h1>
               <p className="hero-description">

@@ -27,7 +27,7 @@ function Header() {
   const navItems = [
     { path: '/', label: 'Dashboard', icon: '🏠' },
     // TrendSpider EMA Scanner - top priority
-    { path: '/trendspider', label: 'EMA Scanner', icon: '📊' },
+    { path: '/trendspider', label: 'TrendSpider', icon: '📊' },
     // FDV-based scan
     { path: '/fully-diluted', label: 'FDV Scan', icon: '📈' },
     // Bias Tracker - external link
