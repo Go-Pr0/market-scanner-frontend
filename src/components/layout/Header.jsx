@@ -30,6 +30,8 @@ function Header() {
     { path: '/trendspider', label: 'EMA Scanner', icon: '📊' },
     // FDV-based scan
     { path: '/fully-diluted', label: 'FDV Scan', icon: '📈' },
+    // Bias Tracker - external link
+    { url: 'https://morning-tracker.vercel.app', label: 'Bias Tracker', icon: '🧭', external: true },
     // Placeholder nav items for future pages can be re-added here when implemented.
   ];
 
@@ -68,17 +70,33 @@ function Header() {
 
         {/* Navigation */}
         <nav className={`nav-menu ${isMenuOpen ? 'open' : ''}`}>
-          {navItems.map((item) => (
-            <Link
-              key={item.path}
-              to={item.path}
-              className={`nav-item ${isActive(item.path) ? 'active' : ''}`}
-              onClick={(e) => { handleNav(e, item.path); setIsMenuOpen(false); }}
-            >
-              <span className="nav-icon">{item.icon}</span>
-              <span className="nav-label">{item.label}</span>
-            </Link>
-          ))}
+          {navItems.map((item) => {
+            if (item.external) {
+              return (
+                <a
+                  key={item.label}
+                  href={item.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="nav-item"
+                >
+                  <span className="nav-icon">{item.icon}</span>
+                  <span className="nav-label">{item.label}</span>
+                </a>
+              );
+            }
+            return (
+              <Link
+                key={item.path}
+                to={item.path}
+                className={`nav-item ${isActive(item.path) ? 'active' : ''}`}
+                onClick={(e) => { handleNav(e, item.path); setIsMenuOpen(false); }}
+              >
+                <span className="nav-icon">{item.icon}</span>
+                <span className="nav-label">{item.label}</span>
+              </Link>
+            );
+          })}
         </nav>
 
         {/* Header Controls */}
@@ -143,17 +161,33 @@ function Header() {
               </button>
             </div>
             <div className="mobile-nav">
-              {navItems.map((item) => (
-                <Link
-                  key={item.path}
-                  to={item.path}
-                  className={`mobile-nav-item ${isActive(item.path) ? 'active' : ''}`}
-                  onClick={(e) => { handleNav(e, item.path); setIsMenuOpen(false); }}
-                >
-                  <span className="nav-icon">{item.icon}</span>
-                  <span className="nav-label">{item.label}</span>
-                </Link>
-              ))}
+              {navItems.map((item) => {
+                if (item.external) {
+                  return (
+                    <a
+                      key={item.label}
+                      href={item.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mobile-nav-item"
+                    >
+                      <span className="nav-icon">{item.icon}</span>
+                      <span className="nav-label">{item.label}</span>
+                    </a>
+                  );
+                }
+                return (
+                  <Link
+                    key={item.path}
+                    to={item.path}
+                    className={`mobile-nav-item ${isActive(item.path) ? 'active' : ''}`}
+                    onClick={(e) => { handleNav(e, item.path); setIsMenuOpen(false); }}
+                  >
+                    <span className="nav-icon">{item.icon}</span>
+                    <span className="nav-label">{item.label}</span>
+                  </Link>
+                );
+              })}
             </div>
           </div>
         </div>

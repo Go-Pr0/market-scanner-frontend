@@ -22,15 +22,63 @@ function Home() {
 
   // Mock market status
   useEffect(() => {
-    const now = new Date();
-    const hour = now.getHours();
-    const day = now.getDay();
-    
-    if (day >= 1 && day <= 5 && hour >= 9 && hour < 16) {
-      setMarketStatus('Open');
-    } else {
-      setMarketStatus('Closed');
-    }
+    const getNyseStatus = () => {
+      const now = new Date();
+      const timeInNewYork = new Date(now.toLocaleString('en-US', { timeZone: 'America/New_York' }));
+
+      const year = timeInNewYork.getFullYear();
+      const month = timeInNewYork.getMonth() + 1; // 1-12
+      const day = timeInNewYork.getDate();
+      const dayOfWeek = timeInNewYork.getDay(); // 0=Sun, 6=Sat
+      const hour = timeInNewYork.getHours();
+      const minute = timeInNewYork.getMinutes();
+
+      // NYSE Holidays 2024
+      const holidays = [
+        { month: 1, day: 1 },   // New Year's Day
+        { month: 1, day: 15 },  // Martin Luther King, Jr. Day
+        { month: 2, day: 19 },  // Washington's Birthday
+        { month: 3, day: 29 },  // Good Friday
+        { month: 5, day: 27 },  // Memorial Day
+        { month: 6, day: 19 },  // Juneteenth
+        { month: 7, day: 4 },   // Independence Day
+        { month: 9, day: 2 },   // Labor Day
+        { month: 11, day: 28 }, // Thanksgiving Day
+        { month: 12, day: 25 }, // Christmas Day
+      ];
+
+      const isHoliday = holidays.some(h => h.month === month && h.day === day);
+      if (isHoliday) {
+        return 'Closed';
+      }
+
+      // Check for early close days (e.g., day after Thanksgiving)
+      // For 2024, the day after Thanksgiving (Nov 29) closes at 1:00 PM ET.
+      const isEarlyCloseDay = month === 11 && day === 29;
+
+      // Check if it's a weekend
+      if (dayOfWeek === 0 || dayOfWeek === 6) {
+        return 'Closed';
+      }
+
+      // Check core trading hours (9:30 AM to 4:00 PM ET)
+      const isMarketOpen =
+        (hour > 9 || (hour === 9 && minute >= 30)) &&
+        (hour < 16);
+
+      // Handle early close
+      if (isEarlyCloseDay && (hour >= 13)) {
+        return 'Closed';
+      }
+      
+      if (isMarketOpen) {
+        return 'Open';
+      }
+
+      return 'Closed';
+    };
+
+    setMarketStatus(getNyseStatus());
   }, [currentTime]);
 
   const handleStartScanning = () => {
@@ -59,8 +107,14 @@ function Home() {
       icon: '📈',
       path: '/fully-diluted', // Link to existing page
     },
+    {
+      title: 'BIAS TRACKER',
+      subtitle: 'Bias Tracker',
+      icon: '🧭',
+      url: 'https://morning-tracker.vercel.app',
+      external: true,
+    },
     // TODO: Replace these placeholder objects with real endpoint pages when implemented.
-    {},
     {},
   ];
 
@@ -76,15 +130,24 @@ function Home() {
     },
     // FDV Scanner card – fully implemented
     {
-      title: 'TrendSpider',
+      title: 'FDV Scanner',
       description: 'Analyze coins by Fully-Diluted Valuation. Filter by circulation %, export tickers, and stay ahead of supply unlocks.',
       icon: '📈',
       path: '/fully-diluted',
       gradient: 'var(--primary-gradient)',
       features: ['Threshold Filtering', 'CSV Export', 'Real-time Data']
     },
+    // Bias Tracker card - external link
+    {
+      title: 'Bias Tracker',
+      description: 'Track your trading biases and performance with this powerful external tool. Fully integrated for a seamless experience.',
+      icon: '🧭',
+      url: 'https://morning-tracker.vercel.app',
+      external: true,
+      gradient: 'var(--info-gradient)',
+      features: ['Bias Analysis', 'Performance Metrics', 'Trade Journaling', 'External Integration']
+    },
     // Placeholders for upcoming features – empty objects will render as blank outline cards
-    {},
     {},
   ];
 
@@ -180,6 +243,33 @@ function Home() {
         <section className="stats-section animate-slide-up">
           <div className="stats-grid">
             {dashboardCards.map((card, index) => {
+              const cardContent = (
+                <>
+                  <div className="stat-card-header">
+                    <div className="stat-card-icon">{card.icon}</div>
+                    <div className="stat-card-title">{card.title}</div>
+                  </div>
+                  <div className="stat-card-content">
+                    <div className="stat-card-value">{card.subtitle}</div>
+                  </div>
+                </>
+              );
+
+              // Handle external link
+              if (card.external && card.url) {
+                return (
+                  <a
+                    key={index}
+                    href={card.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`stat-card glass link-card ${highlightCards ? 'glare' : ''}`}
+                  >
+                    {cardContent}
+                  </a>
+                );
+              }
+              
               // If the card has a path, render it as a clickable link
               if (card.path) {
                 return (
@@ -188,13 +278,7 @@ function Home() {
                     to={card.path}
                     className={`stat-card glass link-card ${highlightCards ? 'glare' : ''}`}
                   >
-                    <div className="stat-card-header">
-                      <div className="stat-card-icon">{card.icon}</div>
-                      <div className="stat-card-title">{card.title}</div>
-                    </div>
-                    <div className="stat-card-content">
-                      <div className="stat-card-value">{card.subtitle}</div>
-                    </div>
+                    {cardContent}
                   </Link>
                 );
               }
@@ -302,38 +386,54 @@ function Home() {
           </h2>
           <div className="features-grid">
             {featureCards.map((feature, index) => {
-              // Render fully defined card
-              if (feature.path) {
+              // Placeholder for upcoming features
+              if (!feature.path && !feature.external) {
+                return <div key={index} className="feature-card glass placeholder-card animate-slide-up"></div>;
+              }
+
+              const featureContent = (
+                <>
+                  <div className="feature-header">
+                    <div
+                      className="feature-icon"
+                      style={{ background: feature.gradient }}
+                    >
+                      {feature.icon}
+                    </div>
+                    <h3 className="feature-title">{feature.title}</h3>
+                  </div>
+                  <p className="feature-description">{feature.description}</p>
+                  <ul className="feature-list">
+                    {feature.features.map((item, itemIndex) => (
+                      <li key={itemIndex} className="feature-item">
+                        <span className="feature-check">✓</span>
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                </>
+              );
+
+              // Handle external link
+              if (feature.external) {
                 return (
                   <div key={index} className="feature-card glass animate-slide-up">
-                    <div className="feature-header">
-                      <div
-                        className="feature-icon"
-                        style={{ background: feature.gradient }}
-                      >
-                        {feature.icon}
-                      </div>
-                      <h3 className="feature-title">{feature.title}</h3>
-                    </div>
-                    <p className="feature-description">{feature.description}</p>
-                    <ul className="feature-list">
-                      {feature.features.map((item, itemIndex) => (
-                        <li key={itemIndex} className="feature-item">
-                          <span className="feature-check">✓</span>
-                          {item}
-                        </li>
-                      ))}
-                    </ul>
-                    <Link to={feature.path} className="feature-btn btn btn-secondary">
+                    {featureContent}
+                    <a href={feature.url} target="_blank" rel="noopener noreferrer" className="feature-btn btn btn-secondary">
                       Explore {feature.title}
-                    </Link>
+                    </a>
                   </div>
                 );
               }
-
-              // Placeholder for upcoming features
+              
+              // Render fully defined card
               return (
-                <div key={index} className="feature-card glass placeholder-card animate-slide-up"></div>
+                <div key={index} className="feature-card glass animate-slide-up">
+                  {featureContent}
+                  <Link to={feature.path} className="feature-btn btn btn-secondary">
+                    Explore {feature.title}
+                  </Link>
+                </div>
               );
             })}
           </div>
