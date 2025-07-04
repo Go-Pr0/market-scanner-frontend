@@ -37,7 +37,13 @@ function Header() {
     // Placeholder nav items for future pages can be re-added here when implemented.
   ];
 
-  const isActive = (path) => location.pathname === path;
+  const isActive = (path) => {
+    // Special handling for multi-page features
+    if (path === '/trade-chat') {
+      return location.pathname.startsWith('/trade-chat') || location.pathname.startsWith('/trade-setup');
+    }
+    return location.pathname === path;
+  };
 
   const getStatusColor = () => {
     if (healthData?.status === 'healthy' && apiData?.status === 'active') {

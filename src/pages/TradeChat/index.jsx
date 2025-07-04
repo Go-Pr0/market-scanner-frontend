@@ -16,7 +16,7 @@ function TradeChatPage() {
   // Redirect to setup if no questions cached
   useEffect(() => {
     if (!questions) {
-      navigate('/trade-setup');
+      navigate('/trade-setup', { replace: true });
     }
   }, [questions, navigate]);
 
