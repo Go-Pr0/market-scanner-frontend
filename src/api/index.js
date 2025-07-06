@@ -51,5 +51,19 @@ export const getAvailableTimeframes = () =>
 export const generateTradeQuestions = (answered) =>
   apiClient.post('/api/questions/generate', { answered });
 
+// New AI Assistant endpoints
+export const sendChatMessage = (payload) =>
+  apiClient.post('/api/chat/message', payload);
+
+export const getRecentChats = (limit = 50) =>
+  apiClient.get('/api/chat/recent', { params: { limit } });
+
+export const getChatHistory = (chatId) =>
+  apiClient.get(`/api/chat/${chatId}/history`);
+
+export const deleteChat = (chatId) =>
+  apiClient.delete(`/api/chat/${chatId}`);
+
+// Legacy endpoint for backward compatibility
 export const advisorChatMessage = (payload) =>
   apiClient.post('/api/chat/advisor', payload); 

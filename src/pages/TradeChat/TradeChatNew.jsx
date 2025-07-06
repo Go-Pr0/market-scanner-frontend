@@ -5,7 +5,7 @@ import useTradeQuestions from '../../hooks/useTradeQuestions';
 import useAIAssistant from '../../hooks/useAIAssistant';
 import './TradeChat.css';
 
-function TradeChatPage() {
+function TradeChatNew() {
   const navigate = useNavigate();
   const { questions } = useTradeQuestions();
   const {
@@ -281,4 +281,4 @@ function TradeChatPage() {
   );
 }
 
-export default TradeChatPage; 
+export default TradeChatNew;
