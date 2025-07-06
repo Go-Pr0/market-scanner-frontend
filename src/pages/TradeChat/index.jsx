@@ -36,10 +36,7 @@ function TradeChatPage() {
     }
   }, [questions, navigate]);
 
-  // Auto-scroll to bottom when new messages arrive
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
+  // Removed auto-scroll effect to prevent the page from jumping to the bottom on updates
 
   // Set initial textarea height on load
   useEffect(() => {
