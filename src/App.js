@@ -2,7 +2,7 @@ import './App.css';
 
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { RecentProvider } from './contexts/RecentContext';
-import { AuthProvider } from './contexts/AuthContext';
+import { AuthProvider } from './contexts/AuthContextNew';
 
 // Components
 import ProtectedRoute from './components/ProtectedRoute';
@@ -11,9 +11,10 @@ import ProtectedRoute from './components/ProtectedRoute';
 import Home from './pages/Home';
 import SymbolsPage from './pages/Symbols';
 import TrendSpiderPage from './pages/TrendSpider';
-import VerificationPage from './pages/Verification';
+import LoginPage from './pages/Login';
 import TradeSetupPage from './pages/TradeSetup';
 import TradeChatPage from './pages/TradeChat';
+import ProfilePage from './pages/Profile';
 
 function App() {
   return (
@@ -21,8 +22,8 @@ function App() {
       <RecentProvider>
         <Router>
           <Routes>
-            {/* Public route for verification */}
-            <Route path="/verify" element={<VerificationPage />} />
+            {/* Public route for login */}
+            <Route path="/login" element={<LoginPage />} />
             
             {/* Protected routes */}
             <Route path="/" element={
@@ -48,6 +49,11 @@ function App() {
             <Route path="/trade-chat" element={
               <ProtectedRoute>
                 <TradeChatPage />
+              </ProtectedRoute>
+            } />
+            <Route path="/profile" element={
+              <ProtectedRoute>
+                <ProfilePage />
               </ProtectedRoute>
             } />
           </Routes>

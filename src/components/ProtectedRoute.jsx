@@ -1,6 +1,6 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../contexts/AuthContextNew';
 
 function ProtectedRoute({ children }) {
   const { isAuthenticated, isLoading } = useAuth();
@@ -10,16 +10,16 @@ function ProtectedRoute({ children }) {
     return (
       <div className="loading-container">
         <div className="loading-content">
-          <div className="loading-spinner animate-spin">⏳</div>
-          <div className="loading-text">Loading...</div>
+          <div className="loading-spinner animate-spin">🔄</div>
+          <div className="loading-text">Authenticating...</div>
         </div>
       </div>
     );
   }
 
-  // Redirect to verification if not authenticated
+  // Redirect to login if not authenticated
   if (!isAuthenticated) {
-    return <Navigate to="/verify" replace />;
+    return <Navigate to="/login" replace />;
   }
 
   // Render the protected content

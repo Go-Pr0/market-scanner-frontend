@@ -1,10 +1,12 @@
 import { useState, useCallback, useEffect } from 'react';
 import { sendChatMessage, getRecentChats, getChatHistory, deleteChat } from '../api';
+import { useAuth } from '../contexts/AuthContextNew';
 
 /**
  * Hook to manage AI assistant chat with persistent storage.
  */
 export default function useAIAssistant() {
+  const { isAuthenticated } = useAuth();
   const [currentChatId, setCurrentChatId] = useState(null);
   const [messages, setMessages] = useState([]); // { role: 'user'|'assistant', content: '', timestamp: '' }
   const [recentChats, setRecentChats] = useState([]);
@@ -12,10 +14,12 @@ export default function useAIAssistant() {
   const [error, setError] = useState(null);
   const [loadingChats, setLoadingChats] = useState(false);
 
-  // Load recent chats on mount
+  // Load recent chats on mount when authenticated
   useEffect(() => {
-    loadRecentChats();
-  }, []);
+    if (isAuthenticated) {
+      loadRecentChats();
+    }
+  }, [isAuthenticated]);
 
   const loadRecentChats = useCallback(async () => {
     setLoadingChats(true);

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import useHealthStatus from '../../hooks/useHealthStatus';
 import useApiStatus from '../../hooks/useApiStatus';
-import { useAuth } from '../../contexts/AuthContext';
+import { useAuth } from '../../contexts/AuthContextNew';
 import './Header.css';
 import EverbloomLogo from '../logo_images/full_logo_no_bg.png';
 
@@ -13,7 +13,7 @@ function Header() {
   const [scrolled, setScrolled] = useState(false);
   const { data: healthData } = useHealthStatus();
   const { data: apiData } = useApiStatus();
-  const { logout } = useAuth();
+  const { logout, user } = useAuth();
 
   // Handle scroll effect
   useEffect(() => {
@@ -63,7 +63,7 @@ function Header() {
 
   const handleLogout = () => {
     logout();
-    navigate('/verify');
+    navigate('/login');
   };
 
   return (
@@ -118,6 +118,16 @@ function Header() {
             />
             <div className="search-icon">🔍</div>
           </div>
+
+          {/* User Info */}
+          {user && (
+            <Link to="/profile" className="user-info" title="View Profile">
+              <span className="user-name" title={user.email}>
+                {user.full_name || user.email.split('@')[0]}
+              </span>
+              <span className="user-icon">👤</span>
+            </Link>
+          )}
 
           {/* Status Indicator */}
           <div className="status-indicator">

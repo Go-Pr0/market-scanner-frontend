@@ -6,6 +6,37 @@ export const getHealthStatus = () => apiClient.get('/health');
 // API status endpoint - `GET /api/status`
 export const getApiStatus = () => apiClient.get('/api/status');
 
+// Authentication endpoints
+export const registerUser = (userData) =>
+  apiClient.post('/api/auth/register', userData);
+
+export const loginUser = (credentials) =>
+  apiClient.post('/api/auth/login', credentials);
+
+export const refreshToken = () =>
+  apiClient.post('/api/auth/refresh');
+
+export const getCurrentUser = () =>
+  apiClient.get('/api/auth/me');
+
+export const updateCurrentUser = (userData) =>
+  apiClient.put('/api/auth/me', userData);
+
+export const changePassword = (passwordData) =>
+  apiClient.post('/api/auth/change-password', passwordData);
+
+export const checkEmailWhitelist = (email) =>
+  apiClient.post('/api/auth/check-email', { email });
+
+export const getWhitelistEmails = () =>
+  apiClient.get('/api/auth/whitelist');
+
+export const addEmailToWhitelist = (email) =>
+  apiClient.post('/api/auth/whitelist', { email });
+
+export const removeEmailFromWhitelist = (email) =>
+  apiClient.delete(`/api/auth/whitelist/${email}`);
+
 // Market symbols endpoint - `GET /api/market/fully-diluted`
 export const getFullyDilutedSymbols = (threshold = 85) =>
   apiClient.get(`/api/market/fully_diluted/${threshold}`);

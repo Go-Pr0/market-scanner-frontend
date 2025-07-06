@@ -156,6 +156,41 @@
   pointer-events: none;
 }
 
+/* User Info */
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-primary);
+  text-decoration: none;
+  transition: all var(--transition-normal);
+  cursor: pointer;
+}
+
+.user-info:hover {
+  background: var(--bg-card-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.user-name {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.user-icon {
+  font-size: 1rem;
+  color: var(--text-secondary);
+}
+
 /* Status Indicator */
 .status-indicator {
   display: flex;
@@ -353,6 +388,10 @@
   }
   
   .status-text {
+    display: none;
+  }
+  
+  .user-name {
     display: none;
   }
   
