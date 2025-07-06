@@ -93,8 +93,4 @@ export const getChatHistory = (chatId) =>
   apiClient.get(`/api/chat/${chatId}/history`);
 
 export const deleteChat = (chatId) =>
-  apiClient.delete(`/api/chat/${chatId}`);
-
-// Legacy endpoint for backward compatibility
-export const advisorChatMessage = (payload) =>
-  apiClient.post('/api/chat/advisor', payload); 
+  apiClient.delete(`/api/chat/${chatId}`); 

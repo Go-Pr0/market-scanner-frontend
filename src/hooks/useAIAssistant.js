@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect } from 'react';
 import { sendChatMessage, getRecentChats, getChatHistory, deleteChat } from '../api';
-import { useAuth } from '../contexts/AuthContextNew';
+import { useAuth } from '../contexts/AuthContext';
 
 /**
  * Hook to manage AI assistant chat with persistent storage.

@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../contexts/AuthContextNew';
+import { useAuth } from '../../contexts/AuthContext';
 import './Verification.css';
 
 function VerificationPage() {

@@ -2,7 +2,7 @@ import './App.css';
 
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { RecentProvider } from './contexts/RecentContext';
-import { AuthProvider } from './contexts/AuthContextNew';
+import { AuthProvider } from './contexts/AuthContext';
 
 // Components
 import ProtectedRoute from './components/ProtectedRoute';

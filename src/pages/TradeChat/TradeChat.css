@@ -29,6 +29,7 @@
   flex-direction: column;
   align-items: flex-start;
   gap: var(--spacing-xs);
+  min-height: 72px; /* Reserve space so layout doesn't shift when badge appears */
 }
 
 .current-chat-info {
@@ -37,11 +38,16 @@
   gap: var(--spacing-sm);
   font-size: 0.9rem;
   color: var(--text-secondary);
+  min-height: 24px;
 }
 
 .chat-title {
   font-weight: 500;
   color: var(--text-primary);
+  max-width: 220px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .chat-status {

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Layout from '../../components/layout/Layout';
-import { useAuth } from '../../contexts/AuthContextNew';
+import { useAuth } from '../../contexts/AuthContext';
 import { updateCurrentUser, changePassword } from '../../api';
 import './Profile.css';
 

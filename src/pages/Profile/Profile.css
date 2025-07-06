@@ -1,7 +1,7 @@
 /* Profile Page Styles */
 .profile-page {
   min-height: 100vh;
-  background: var(--background-gradient);
+  background: var(--bg-primary);
 }
 
 .profile-container {
@@ -19,6 +19,10 @@
   font-size: 2.5rem;
   font-weight: 700;
   margin-bottom: 0.5rem;
+  background: var(--primary-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .profile-header .page-subtitle {
@@ -34,12 +38,12 @@
 }
 
 .profile-card {
-  background: rgba(255, 255, 255, 0.95);
-  border-radius: 16px;
+  background: var(--bg-card);
+  border-radius: var(--radius-xl);
   padding: 2rem;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-xl);
   backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid var(--border-primary);
 }
 
 .card-header {
@@ -48,7 +52,7 @@
   align-items: center;
   margin-bottom: 1.5rem;
   padding-bottom: 1rem;
-  border-bottom: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border-primary);
 }
 
 .card-header h2 {
@@ -69,7 +73,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 0.75rem 0;
-  border-bottom: 1px solid var(--border-light);
+  border-bottom: 1px solid var(--border-secondary);
 }
 
 .info-item:last-child {
@@ -117,17 +121,18 @@
 
 .form-input {
   padding: 0.75rem 1rem;
-  border: 2px solid var(--border-color);
-  border-radius: 8px;
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-md);
   font-size: 1rem;
-  transition: all 0.3s ease;
-  background: white;
+  transition: all var(--transition-normal);
+  background: var(--bg-primary);
+  color: var(--text-primary);
 }
 
 .form-input:focus {
   outline: none;
-  border-color: var(--primary-color);
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  border-color: var(--text-accent);
+  box-shadow: 0 0 0 3px rgba(100, 255, 218, 0.2);
 }
 
 .form-hint {
@@ -155,15 +160,16 @@
 }
 
 .security-tips {
-  background: var(--info-background);
+  background: var(--bg-secondary);
   padding: 1.5rem;
-  border-radius: 8px;
-  border-left: 4px solid var(--info-color);
+  border-radius: var(--radius-lg);
+  border-left: 4px solid var(--text-accent);
+  border: 1px solid var(--border-primary);
 }
 
 .security-tips h4 {
   margin: 0 0 1rem 0;
-  color: var(--info-color);
+  color: var(--text-accent);
   font-weight: 600;
 }
 
@@ -194,7 +200,7 @@
   color: var(--text-primary);
   margin: 0 0 0.5rem 0;
   padding-bottom: 0.5rem;
-  border-bottom: 1px solid var(--border-light);
+  border-bottom: 1px solid var(--border-secondary);
 }
 
 /* Messages */
@@ -210,15 +216,15 @@
 }
 
 .success-message {
-  background: var(--success-background);
+  background: rgba(16, 185, 129, 0.1);
   color: var(--success-color);
-  border: 1px solid var(--success-border);
+  border: 1px solid rgba(16, 185, 129, 0.3);
 }
 
 .error-message {
-  background: var(--danger-background);
+  background: rgba(239, 68, 68, 0.1);
   color: var(--danger-color);
-  border: 1px solid var(--danger-border);
+  border: 1px solid rgba(239, 68, 68, 0.3);
 }
 
 .success-icon,
@@ -228,18 +234,18 @@
 
 /* Buttons */
 .btn {
-  padding: 0.75rem 1.5rem;
-  border-radius: 8px;
-  font-weight: 600;
-  font-size: 0.95rem;
+  padding: var(--spacing-sm) var(--spacing-lg);
+  border-radius: var(--radius-md);
+  font-weight: 500;
+  font-size: 0.875rem;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all var(--transition-normal);
   border: none;
   text-decoration: none;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
+  gap: var(--spacing-xs);
 }
 
 .btn-primary {
@@ -249,18 +255,18 @@
 
 .btn-primary:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
+  box-shadow: var(--shadow-lg);
 }
 
 .btn-outline {
   background: transparent;
-  color: var(--primary-color);
-  border: 2px solid var(--primary-color);
+  color: var(--text-accent);
+  border: 1px solid var(--border-primary);
 }
 
 .btn-outline:hover:not(:disabled) {
-  background: var(--primary-color);
-  color: white;
+  background: var(--bg-card-hover);
+  border-color: var(--text-accent);
 }
 
 .btn:disabled {
@@ -309,21 +315,4 @@
   }
 }
 
-/* CSS Variables for theming */
-:root {
-  --primary-color: #3b82f6;
-  --primary-gradient: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
-  --success-color: #10b981;
-  --success-background: #ecfdf5;
-  --success-border: #a7f3d0;
-  --danger-color: #ef4444;
-  --danger-background: #fef2f2;
-  --danger-border: #fecaca;
-  --info-color: #3b82f6;
-  --info-background: #eff6ff;
-  --text-primary: #1f2937;
-  --text-secondary: #6b7280;
-  --border-color: #d1d5db;
-  --border-light: #f3f4f6;
-  --background-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-}
+/* Colors are now handled by the global theme in index.css */

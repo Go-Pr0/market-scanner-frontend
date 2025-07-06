@@ -135,12 +135,14 @@ function TradeChatPage() {
             <h1 className="page-title">
               <span className="text-gradient">AI Trade Advisor</span>
             </h1>
-            {currentChat && (
-              <div className="current-chat-info">
-                <span className="chat-title">{formatChatTitle(currentChat)}</span>
-                <span className="chat-status">{currentChat.status}</span>
-              </div>
-            )}
+            <div className="current-chat-info">
+              {currentChat && (
+                <>
+                  <span className="chat-title">{formatChatTitle(currentChat)}</span>
+                  <span className="chat-status">{currentChat.status}</span>
+                </>
+              )}
+            </div>
           </div>
           
           <div className="chat-controls">
