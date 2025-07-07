@@ -14,13 +14,6 @@ export default function useAIAssistant() {
   const [error, setError] = useState(null);
   const [loadingChats, setLoadingChats] = useState(false);
 
-  // Load recent chats on mount when authenticated
-  useEffect(() => {
-    if (isAuthenticated) {
-      loadRecentChats();
-    }
-  }, [isAuthenticated]);
-
   const loadRecentChats = useCallback(async () => {
     setLoadingChats(true);
     try {
@@ -32,6 +25,13 @@ export default function useAIAssistant() {
       setLoadingChats(false);
     }
   }, []);
+
+  // Load recent chats on mount when authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      loadRecentChats();
+    }
+  }, [isAuthenticated, loadRecentChats]);
 
   const loadChatHistory = useCallback(async (chatId) => {
     if (!chatId) return;

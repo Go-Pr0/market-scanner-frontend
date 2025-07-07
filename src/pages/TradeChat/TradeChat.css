@@ -416,4 +416,19 @@
 
 .error-close:hover {
   opacity: 0.7;
+}
+
+.loading-state {
+  text-align: center;
+  padding: var(--spacing-xl);
+  margin: auto;
+}
+
+.loading-state h1 {
+  margin-bottom: var(--spacing-md);
+}
+
+.loading-state p {
+  color: var(--text-secondary);
+  font-size: 1.1rem;
 } 

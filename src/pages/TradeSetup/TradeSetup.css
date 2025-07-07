@@ -57,4 +57,18 @@
   background: rgba(212, 117, 107, 0.1);
   padding: var(--spacing-sm);
   border-radius: var(--radius-md);
+}
+
+.loading-state {
+  text-align: center;
+  padding: var(--spacing-xl);
+}
+
+.loading-state h1 {
+  margin-bottom: var(--spacing-md);
+}
+
+.loading-state p {
+  color: var(--text-secondary);
+  font-size: 1.1rem;
 } 

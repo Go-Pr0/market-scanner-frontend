@@ -15,9 +15,10 @@ function TradeSetupPage() {
   const { 
     questions: cachedQuestions, 
     fetchAdditionalQuestions, 
-    cacheAllQuestions,
+    saveAllQuestions,
     loading, 
     error, 
+    initialLoading,
     clearQuestions 
   } = useTradeQuestions();
 
@@ -45,9 +46,27 @@ function TradeSetupPage() {
       ...INITIAL_QUESTIONS.map((q, i) => ({ question: q, answer: initialAnswers[i] })),
       ...additionalQuestions.map((q, i) => ({ question: q, answer: additionalAnswers[i] }))
     ];
-    cacheAllQuestions(allQuestions);
-    navigate('/trade-chat');
+    try {
+      await saveAllQuestions(allQuestions);
+      navigate('/trade-chat');
+    } catch (err) {
+      // error is handled in hook
+    }
   };
+
+  // Show loading while checking for existing questionnaire
+  if (initialLoading) {
+    return (
+      <Layout className="dashboard">
+        <div className="trade-setup-container">
+          <div className="loading-state">
+            <h1 className="page-title"><span className="text-gradient">Loading...</span></h1>
+            <p>Checking your questionnaire setup...</p>
+          </div>
+        </div>
+      </Layout>
+    );
+  }
 
   if (cachedQuestions) {
     // Already setup

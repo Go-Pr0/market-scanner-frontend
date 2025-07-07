@@ -82,6 +82,16 @@ export const getAvailableTimeframes = () =>
 export const generateTradeQuestions = (answered) =>
   apiClient.post('/api/questions/generate', { answered });
 
+// Questionnaire endpoints
+export const saveQuestionnaire = (questions) =>
+  apiClient.post('/api/questionnaire/save', { questions });
+
+export const getQuestionnaire = () =>
+  apiClient.get('/api/questionnaire');
+
+export const checkQuestionnaireStatus = () =>
+  apiClient.get('/api/questionnaire/check');
+
 // New AI Assistant endpoints
 export const sendChatMessage = (payload) =>
   apiClient.post('/api/chat/message', payload);

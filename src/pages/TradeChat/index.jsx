@@ -7,7 +7,7 @@ import './TradeChat.css';
 
 function TradeChatPage() {
   const navigate = useNavigate();
-  const { questions } = useTradeQuestions();
+  const { questions, initialLoading } = useTradeQuestions();
   const {
     currentChatId,
     messages,
@@ -29,14 +29,13 @@ function TradeChatPage() {
   const textareaRef = useRef(null);
   const messagesEndRef = useRef(null);
 
-  // Redirect to setup if no questions cached
+  // All useEffect hooks must be at the top before any conditional returns
+  // Redirect to setup if no questions found after loading
   useEffect(() => {
-    if (!questions) {
+    if (!initialLoading && !questions) {
       navigate('/trade-setup', { replace: true });
     }
-  }, [questions, navigate]);
-
-  // Removed auto-scroll effect to prevent the page from jumping to the bottom on updates
+  }, [questions, initialLoading, navigate]);
 
   // Set initial textarea height on load
   useEffect(() => {
@@ -46,6 +45,27 @@ function TradeChatPage() {
       textarea.style.height = `${textarea.scrollHeight}px`;
     }
   }, []);
+
+  // Show loading while checking questionnaire
+  if (initialLoading) {
+    return (
+      <Layout className="dashboard">
+        <div className="trade-chat-container">
+          <div className="loading-state">
+            <h1 className="page-title">
+              <span className="text-gradient">Loading Trade Assistant...</span>
+            </h1>
+            <p>Checking your questionnaire setup...</p>
+          </div>
+        </div>
+      </Layout>
+    );
+  }
+
+  // If no questions after loading, the useEffect will redirect
+  if (!questions) {
+    return null;
+  }
 
   const handleSend = async () => {
     if (!input.trim() || loading) return;
