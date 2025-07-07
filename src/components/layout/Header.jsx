@@ -101,6 +101,14 @@ function Header() {
             <span className="status-text">Online</span>
           </div>
 
+          {/* User Profile Button */}
+          <Link to="/profile" className="profile-button" title="User Profile">
+            <svg className="profile-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M20 21V19C20 17.9391 19.5786 16.9217 18.8284 16.1716C18.0783 15.4214 17.0609 15 16 15H8C6.93913 15 5.92172 15.4214 5.17157 16.1716C4.42143 16.9217 4 17.9391 4 19V21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              <circle cx="12" cy="7" r="4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </Link>
+
           {/* Logout Button */}
           <button className="logout-button" onClick={handleLogout} title="Logout">
             <svg className="logout-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -165,6 +173,19 @@ function Header() {
                   </Link>
                 );
               })}
+              
+              {/* Mobile Profile Button */}
+              <Link
+                to="/profile"
+                className={`mobile-nav-item profile-mobile ${location.pathname === '/profile' ? 'active' : ''}`}
+                onClick={(e) => { handleNav(e, '/profile'); setIsMenuOpen(false); }}
+              >
+                <svg className="profile-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M20 21V19C20 17.9391 19.5786 16.9217 18.8284 16.1716C18.0783 15.4214 17.0609 15 16 15H8C6.93913 15 5.92172 15.4214 5.17157 16.1716C4.42143 16.9217 4 17.9391 4 19V21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <circle cx="12" cy="7" r="4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+                <span className="nav-label">Profile</span>
+              </Link>
               
               {/* Mobile Logout Button */}
               <button
