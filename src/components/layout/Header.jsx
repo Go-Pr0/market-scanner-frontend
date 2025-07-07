@@ -1,19 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import useHealthStatus from '../../hooks/useHealthStatus';
-import useApiStatus from '../../hooks/useApiStatus';
 import { useAuth } from '../../contexts/AuthContext';
 import './Header.css';
-import EverbloomLogo from '../logo_images/full_logo_no_bg.png';
 
 function Header() {
   const location = useLocation();
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const { data: healthData } = useHealthStatus();
-  const { data: apiData } = useApiStatus();
-  const { logout, user } = useAuth();
+  const { user, logout } = useAuth();
 
   // Handle scroll effect
   useEffect(() => {
@@ -25,16 +20,11 @@ function Header() {
   }, []);
 
   const navItems = [
-    { path: '/', label: 'Dashboard', icon: '🏠' },
-    // TrendSpider EMA Scanner - top priority
-    { path: '/trendspider', label: 'TrendSpider', icon: '📊' },
-    // FDV-based scan
-    { path: '/fully-diluted', label: 'FDV Scan', icon: '📈' },
-    // Bias Tracker - external link
-    { url: 'https://morning-tracker.vercel.app', label: 'Bias Tracker', icon: '🧭', external: true },
-    // Trade Planner Chat
-    { path: '/trade-chat', label: 'Trade Assistant', icon: '💬' },
-    // Placeholder nav items for future pages can be re-added here when implemented.
+    { path: '/', label: 'Dashboard' },
+    { path: '/trendspider', label: 'EMA Scanner' },
+    { path: '/fully-diluted', label: 'FDV Scanner' },
+    { url: 'https://morning-tracker.vercel.app', label: 'Bias Tracker', external: true },
+    { path: '/trade-chat', label: 'Trade Assistant' },
   ];
 
   const isActive = (path) => {
@@ -43,13 +33,6 @@ function Header() {
       return location.pathname.startsWith('/trade-chat') || location.pathname.startsWith('/trade-setup');
     }
     return location.pathname === path;
-  };
-
-  const getStatusColor = () => {
-    if (healthData?.status === 'healthy' && apiData?.status === 'active') {
-      return 'var(--success-gradient)';
-    }
-    return 'var(--danger-gradient)';
   };
 
   const handleNav = (e, path) => {
@@ -72,82 +55,59 @@ function Header() {
         {/* Logo Section */}
         <div className="logo-section">
           <Link to="/" className="logo">
-            <img src={EverbloomLogo} alt="Everbloom Trading Portal" className="logo-image" />
+            <div className="logo-text">
+              <span className="logo-title">Hello, {user?.full_name || user?.email?.split('@')[0] || 'User'}</span> 
+            </div>
           </Link>
         </div>
 
         {/* Navigation */}
-        <nav className={`nav-menu ${isMenuOpen ? 'open' : ''}`}>
-          {navItems.map((item) => {
-            if (item.external) {
+        <div className="nav-center">
+          <nav className={`nav-menu ${isMenuOpen ? 'open' : ''}`}>
+            {navItems.map((item) => {
+              if (item.external) {
+                return (
+                  <a
+                    key={item.label}
+                    href={item.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="nav-item"
+                  >
+                    <span className="nav-label">{item.label}</span>
+                  </a>
+                );
+              }
               return (
-                <a
-                  key={item.label}
-                  href={item.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="nav-item"
+                <Link
+                  key={item.path}
+                  to={item.path}
+                  className={`nav-item ${isActive(item.path) ? 'active' : ''}`}
+                  onClick={(e) => { handleNav(e, item.path); setIsMenuOpen(false); }}
                 >
-                  <span className="nav-icon">{item.icon}</span>
                   <span className="nav-label">{item.label}</span>
-                </a>
+                </Link>
               );
-            }
-            return (
-              <Link
-                key={item.path}
-                to={item.path}
-                className={`nav-item ${isActive(item.path) ? 'active' : ''}`}
-                onClick={(e) => { handleNav(e, item.path); setIsMenuOpen(false); }}
-              >
-                <span className="nav-icon">{item.icon}</span>
-                <span className="nav-label">{item.label}</span>
-              </Link>
-            );
-          })}
-        </nav>
+            })}
+          </nav>
+        </div>
 
         {/* Header Controls */}
         <div className="header-controls">
-          {/* Search Bar */}
-          <div className="search-container">
-            <input
-              type="text"
-              placeholder="Search symbols..."
-              className="search-input"
-            />
-            <div className="search-icon">🔍</div>
-          </div>
-
-          {/* User Info */}
-          {user && (
-            <Link to="/profile" className="user-info" title="View Profile">
-              <span className="user-name" title={user.email}>
-                {user.full_name || user.email.split('@')[0]}
-              </span>
-              <span className="user-icon">👤</span>
-            </Link>
-          )}
-
+          
           {/* Status Indicator */}
           <div className="status-indicator">
-            <div 
-              className="status-dot"
-              style={{ background: getStatusColor() }}
-              title={`API: ${apiData?.status || 'Unknown'}, Health: ${healthData?.status || 'Unknown'}`}
-            ></div>
-            <span className="status-text">
-              {(healthData?.status === 'healthy' && apiData?.status === 'active') ? 'Online' : 'Offline'}
-            </span>
+            <div className="status-dot"></div>
+            <span className="status-text">Online</span>
           </div>
 
           {/* Logout Button */}
-          <button
-            className="logout-btn"
-            onClick={handleLogout}
-            title="Logout"
-          >
-            <span className="logout-icon">🚪</span>
+          <button className="logout-button" onClick={handleLogout} title="Logout">
+            <svg className="logout-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M9 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M16 17L21 12L16 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M21 12H9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
           </button>
 
           {/* Mobile Menu Toggle */}
@@ -188,8 +148,8 @@ function Header() {
                       target="_blank"
                       rel="noopener noreferrer"
                       className="mobile-nav-item"
+                      onClick={() => setIsMenuOpen(false)}
                     >
-                      <span className="nav-icon">{item.icon}</span>
                       <span className="nav-label">{item.label}</span>
                     </a>
                   );
@@ -201,11 +161,23 @@ function Header() {
                     className={`mobile-nav-item ${isActive(item.path) ? 'active' : ''}`}
                     onClick={(e) => { handleNav(e, item.path); setIsMenuOpen(false); }}
                   >
-                    <span className="nav-icon">{item.icon}</span>
                     <span className="nav-label">{item.label}</span>
                   </Link>
                 );
               })}
+              
+              {/* Mobile Logout Button */}
+              <button
+                className="mobile-nav-item logout-mobile"
+                onClick={() => { handleLogout(); setIsMenuOpen(false); }}
+              >
+                <svg className="logout-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M9 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M16 17L21 12L16 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M21 12H9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+                <span className="nav-label">Logout</span>
+              </button>
             </div>
           </div>
         </div>

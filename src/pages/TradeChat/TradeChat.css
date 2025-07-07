@@ -51,8 +51,8 @@
 }
 
 .chat-status {
-  background: var(--primary-gradient);
-  color: white;
+  background: var(--primary-color);
+  color: var(--bg-primary);
   padding: 2px 8px;
   border-radius: var(--radius-sm);
   font-size: 0.8rem;
@@ -75,7 +75,7 @@
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
-  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364ffda' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23d4af37' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
   background-repeat: no-repeat;
   background-position: right 0.7rem center;
   background-size: 1em;
@@ -164,7 +164,7 @@
 
 .chat-list-item.active {
   background: var(--bg-secondary);
-  border-color: var(--text-accent);
+  border-color: var(--border-accent);
 }
 
 .chat-item-content {
@@ -213,8 +213,8 @@
 }
 
 .delete-chat-btn:hover {
-  color: var(--danger-color, red);
-  background: rgba(239, 68, 68, 0.1);
+  color: var(--error-color);
+  background: rgba(212, 117, 107, 0.1);
 }
 
 .chat-window {
@@ -247,8 +247,8 @@
 }
 
 .chat-bubble.user {
-  background: var(--primary-gradient);
-  color: white;
+  background: var(--primary-color);
+  color: var(--bg-primary);
   align-self: flex-end;
   border-bottom-right-radius: var(--radius-sm);
 }
@@ -268,9 +268,9 @@
 }
 
 .chat-bubble.error {
-  background: rgba(239, 68, 68, 0.1);
-  border: 1px solid rgba(239, 68, 68, 0.3);
-  color: var(--danger-color, red);
+  background: rgba(212, 117, 107, 0.1);
+  border: 1px solid var(--error-color);
+  color: var(--error-color);
 }
 
 .chat-bubble.loading {
@@ -324,7 +324,7 @@
 }
 
 .input-field-wrapper:focus-within {
-  border-color: var(--text-accent);
+  border-color: var(--border-accent);
 }
 
 .chat-input-form textarea {
@@ -349,20 +349,21 @@
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background: var(--text-accent);
+  background: var(--primary-color);
   color: var(--bg-primary);
   border: none;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: background-color var(--transition-normal);
+  transition: all var(--transition-normal);
   margin-left: 8px;
   align-self: flex-end;
 }
 
 .send-button:hover {
-  background: #fff;
+  background: #c19b2e;
+  transform: translateY(-1px);
 }
 
 .send-button:disabled {
@@ -378,8 +379,8 @@
 }
 
 .error-text {
-  color: var(--danger-color, red);
-  background: rgba(239, 68, 68, 0.1);
+  color: var(--error-color);
+  background: rgba(212, 117, 107, 0.1);
   padding: var(--spacing-sm);
   border-radius: var(--radius-md);
   margin: 0 var(--spacing-lg) var(--spacing-md);
@@ -387,9 +388,9 @@
 }
 
 .error-banner {
-  background: rgba(239, 68, 68, 0.1);
-  border: 1px solid rgba(239, 68, 68, 0.3);
-  color: var(--danger-color, red);
+  background: rgba(212, 117, 107, 0.1);
+  border: 1px solid var(--error-color);
+  color: var(--error-color);
   padding: var(--spacing-sm) var(--spacing-md);
   margin: 0 var(--spacing-lg);
   border-radius: var(--radius-md);
@@ -402,7 +403,7 @@
 .error-close {
   background: none;
   border: none;
-  color: var(--danger-color, red);
+  color: var(--error-color);
   cursor: pointer;
   font-size: 1.2rem;
   padding: 0;

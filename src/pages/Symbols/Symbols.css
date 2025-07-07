@@ -9,26 +9,12 @@
 
 /* Header Section */
 .symbols-header {
-  background: linear-gradient(135deg, 
-    rgba(102, 126, 234, 0.1) 0%, 
-    rgba(118, 75, 162, 0.1) 50%,
-    rgba(100, 255, 218, 0.05) 100%
-  );
+  background: var(--bg-card);
+  border: 1px solid var(--border-primary);
   border-radius: var(--radius-xl);
   padding: var(--spacing-xl);
   position: relative;
   overflow: hidden;
-}
-
-.symbols-header::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="dots" width="10" height="10" patternUnits="userSpaceOnUse"><circle cx="5" cy="5" r="1" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100" height="100" fill="url(%23dots)"/></svg>');
-  opacity: 0.3;
 }
 
 .header-content {
@@ -134,8 +120,8 @@
 
 .search-input:focus {
   outline: none;
-  border-color: var(--text-accent);
-  box-shadow: 0 0 0 2px rgba(100, 255, 218, 0.2);
+  border-color: var(--border-accent);
+  background: var(--bg-card-hover);
 }
 
 .search-input::placeholder {
@@ -172,12 +158,12 @@
 
 .category-btn:hover {
   color: var(--text-primary);
-  border-color: var(--text-accent);
+  border-color: var(--border-accent);
 }
 
 .category-btn.active {
-  background: rgba(100, 255, 218, 0.1);
-  border-color: var(--text-accent);
+  background: rgba(212, 175, 55, 0.1);
+  border-color: var(--border-accent);
   color: var(--text-accent);
 }
 
@@ -223,7 +209,7 @@
 
 .sort-order-btn:hover {
   color: var(--text-primary);
-  border-color: var(--text-accent);
+  border-color: var(--border-accent);
 }
 
 .view-mode-controls {
@@ -248,12 +234,12 @@
 
 .view-btn:hover {
   color: var(--text-primary);
-  border-color: var(--text-accent);
+  border-color: var(--border-accent);
 }
 
 .view-btn.active {
-  background: rgba(100, 255, 218, 0.1);
-  border-color: var(--text-accent);
+  background: rgba(212, 175, 55, 0.1);
+  border-color: var(--border-accent);
   color: var(--text-accent);
 }
 
@@ -347,9 +333,9 @@
 }
 
 .symbol-card-enhanced:hover {
-  transform: translateY(-4px);
+  transform: translateY(-2px);
   box-shadow: var(--shadow-lg);
-  border-color: var(--text-accent);
+  border-color: var(--border-accent);
 }
 
 .card-header {
@@ -417,13 +403,13 @@
 }
 
 .price-change.positive {
-  color: #4ade80;
-  background: rgba(74, 222, 128, 0.1);
+  color: var(--success-color);
+  background: rgba(144, 198, 149, 0.1);
 }
 
 .price-change.negative {
-  color: #f87171;
-  background: rgba(248, 113, 113, 0.1);
+  color: var(--error-color);
+  background: rgba(212, 117, 107, 0.1);
 }
 
 .metrics-grid {
@@ -544,11 +530,11 @@
 }
 
 .change-cell.positive {
-  color: #4ade80;
+  color: var(--success-color);
 }
 
 .change-cell.negative {
-  color: #f87171;
+  color: var(--error-color);
 }
 
 .volume-cell,

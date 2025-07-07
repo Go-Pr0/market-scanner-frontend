@@ -30,7 +30,7 @@
 .question-input {
   min-height: 100px;
   padding: var(--spacing-sm);
-  background: var(--bg-primary);
+  background: var(--bg-card);
   color: var(--text-primary);
   border: 1px solid var(--border-primary);
   border-radius: var(--radius-md);
@@ -42,8 +42,8 @@
 
 .question-input:focus {
   outline: none;
-  border-color: var(--text-accent);
-  box-shadow: 0 0 0 3px rgba(100, 255, 218, 0.2);
+  border-color: var(--border-accent);
+  background: var(--bg-card-hover);
 }
 
 .actions {
@@ -53,8 +53,8 @@
 }
 
 .error-text {
-  color: var(--danger-color, red);
-  background: rgba(239, 68, 68, 0.1);
+  color: var(--error-color);
+  background: rgba(212, 117, 107, 0.1);
   padding: var(--spacing-sm);
   border-radius: var(--radius-md);
 } 

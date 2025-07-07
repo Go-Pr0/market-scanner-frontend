@@ -1,72 +1,35 @@
+/* Layout Root */
 .layout-root {
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  background: var(--bg-primary);
   position: relative;
-  overflow-x: hidden;
 }
 
-/* Animated Background Pattern */
+/* Background Pattern - Subtle */
 .background-pattern {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: 
-    radial-gradient(circle at 20% 50%, rgba(102, 126, 234, 0.1) 0%, transparent 50%),
-    radial-gradient(circle at 80% 20%, rgba(118, 75, 162, 0.1) 0%, transparent 50%),
-    radial-gradient(circle at 40% 80%, rgba(100, 255, 218, 0.05) 0%, transparent 50%);
-  z-index: -2;
-  animation: backgroundFloat 20s ease-in-out infinite;
-}
-
-.background-pattern::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  opacity: 0.02;
   background-image: 
-    linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+    radial-gradient(circle at 25% 25%, var(--text-accent) 1px, transparent 1px),
+    radial-gradient(circle at 75% 75%, var(--text-accent) 1px, transparent 1px);
   background-size: 50px 50px;
-  animation: gridMove 30s linear infinite;
+  background-position: 0 0, 25px 25px;
+  pointer-events: none;
+  z-index: -1;
 }
 
-@keyframes backgroundFloat {
-  0%, 100% {
-    transform: translateX(0) translateY(0) scale(1);
-  }
-  33% {
-    transform: translateX(-20px) translateY(20px) scale(1.1);
-  }
-  66% {
-    transform: translateX(20px) translateY(-20px) scale(0.9);
-  }
-}
-
-@keyframes gridMove {
-  0% {
-    transform: translate(0, 0);
-  }
-  50% {
-    transform: translate(25px, 25px);
-  }
-  100% {
-    transform: translate(0, 0);
-  }
-}
-
-/* Main Content Area */
+/* Main Content */
 .main-content {
   flex: 1;
   display: flex;
   flex-direction: column;
-  position: relative;
-  z-index: 1;
-  padding: var(--spacing-lg) 0;
+  padding-top: 80px; /* Account for fixed header */
 }
 
 .content-wrapper {
@@ -74,70 +37,56 @@
   width: 100%;
   max-width: 1400px;
   margin: 0 auto;
-  padding: 0 var(--spacing-md);
-  position: relative;
+  padding: 0 var(--spacing-lg);
 }
 
-/* Content Area Variants */
-.main-content.dashboard {
-  padding: var(--spacing-md) 0;
+/* Page Transitions */
+.page-fade-in {
+  animation: pageIn 0.3s ease-out;
 }
 
-.main-content.centered {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: calc(100vh - 200px);
+.page-fade-out {
+  animation: pageOut 0.2s ease-in;
 }
 
-.main-content.full-width .content-wrapper {
-  max-width: none;
-  padding: 0;
-}
-
-/* Responsive Design */
-@media (max-width: 1200px) {
-  .content-wrapper {
-    max-width: 100%;
-    padding: 0 var(--spacing-md);
+@keyframes pageIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
+@keyframes pageOut {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+}
+
+/* Dashboard specific styles */
+.dashboard .content-wrapper {
+  padding: 0 var(--spacing-md);
+}
+
+/* Responsive adjustments */
 @media (max-width: 768px) {
   .main-content {
-    padding: var(--spacing-sm) 0;
+    padding-top: 70px;
   }
   
   .content-wrapper {
-    padding: 0 var(--spacing-sm);
+    padding: 0 var(--spacing-md);
   }
   
-  .background-pattern {
-    display: none; /* Reduce complexity on mobile */
+  .dashboard .content-wrapper {
+    padding: 0 var(--spacing-sm);
   }
 }
-
-/* Loading State */
-.layout-root.loading .main-content {
-  opacity: 0.7;
-  pointer-events: none;
-}
-
-/* Dark Mode Adjustments */
-@media (prefers-color-scheme: light) {
-  .background-pattern {
-    background: 
-      radial-gradient(circle at 20% 50%, rgba(102, 126, 234, 0.05) 0%, transparent 50%),
-      radial-gradient(circle at 80% 20%, rgba(118, 75, 162, 0.05) 0%, transparent 50%),
-      radial-gradient(circle at 40% 80%, rgba(100, 255, 218, 0.03) 0%, transparent 50%);
-  }
-}
-
-body.page-fade-in .main-content {
-  opacity: 0;
-  transition: opacity 0.2s ease;
-}
-
-body.page-fade-in-remove .main-content {
-  opacity: 1;
-} 

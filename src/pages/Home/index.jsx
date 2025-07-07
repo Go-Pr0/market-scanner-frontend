@@ -1,16 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import Layout from '../../components/layout/Layout';
-import { useRecent } from '../../contexts/RecentContext';
 import { Link } from 'react-router-dom';
+import Aurora from '../../components/Aurora';
 import './Home.css';
 import useMarketAnalysis from '../../hooks/useMarketAnalysis';
 
 function Home() {
-  const { recentPages } = useRecent();
-  
   const [currentTime, setCurrentTime] = useState(new Date());
   const [marketStatus, setMarketStatus] = useState('Loading...');
-  const [highlightCards, setHighlightCards] = useState(false);
 
   // Update time every second
   useEffect(() => {
@@ -26,7 +23,6 @@ function Home() {
       const now = new Date();
       const timeInNewYork = new Date(now.toLocaleString('en-US', { timeZone: 'America/New_York' }));
 
-      const year = timeInNewYork.getFullYear();
       const month = timeInNewYork.getMonth() + 1; // 1-12
       const day = timeInNewYork.getDate();
       const dayOfWeek = timeInNewYork.getDay(); // 0=Sun, 6=Sat
@@ -81,83 +77,32 @@ function Home() {
     setMarketStatus(getNyseStatus());
   }, [currentTime]);
 
-  const handleStartScanning = () => {
-    setHighlightCards(true);
-  };
-
-  // Remove highlight after animation completes (1s)
-  useEffect(() => {
-    if (highlightCards) {
-      const timer = setTimeout(() => setHighlightCards(false), 1000);
-      return () => clearTimeout(timer);
-    }
-  }, [highlightCards]);
-
-  // Dashboard cards representing backend endpoints
-  const dashboardCards = [
+  // Core trading tools - simplified
+  const tradingTools = [
     {
-      title: 'EMA CENTERED SCANNER', // TrendSpider EMA scanner - top priority
-      subtitle: 'TrendSpider',
-      icon: '📊',
+      title: 'EMA Scanner',
+      description: 'A scanner based on custom relative EMA positions.',
       path: '/trendspider',
+      category: 'Analysis'
     },
-    {
-      title: 'FDV-based Scan', // Fully-diluted endpoint
-      subtitle: 'FDV Scan',
-      icon: '📈',
-      path: '/fully-diluted', // Link to existing page
-    },
-    {
-      title: 'BIAS TRACKER',
-      subtitle: 'Bias Tracker',
-      icon: '🧭',
-      url: 'https://morning-tracker.vercel.app',
-      external: true,
-    },
-    {
-      title: 'AI TRADE ASSISTANT',
-      subtitle: 'Trade Assistant',
-      icon: '💬',
-      path: '/trade-chat',
-    },
-  ];
-
-  const featureCards = [
-    // TrendSpider EMA Scanner card – fully implemented
-    {
-      title: 'TrendSpider',
-      description: 'Advanced EMA analysis with configurable periods, filter conditions, and export capabilities. Perfect for technical analysis workflows.',
-      icon: '📊',
-      path: '/trendspider',
-      gradient: 'var(--accent-gradient)',
-      features: ['Multiple EMA Periods', 'Advanced Filtering', 'Configuration Management', 'CSV Export']
-    },
-    // FDV Scanner card – fully implemented
     {
       title: 'FDV Scanner',
-      description: 'Analyze coins by Fully-Diluted Valuation. Filter by circulation %, export tickers, and stay ahead of supply unlocks.',
-      icon: '📈',
+      description: 'A scanner based on FDV thresholds & metrics.',
       path: '/fully-diluted',
-      gradient: 'var(--primary-gradient)',
-      features: ['Threshold Filtering', 'CSV Export', 'Real-time Data']
+      category: 'Valuation'
     },
-    // Bias Tracker card - external link
     {
       title: 'Bias Tracker',
-      description: 'Track your trading biases and performance with this powerful external tool. Fully integrated for a seamless experience.',
-      icon: '🧭',
+      description: 'A bias tracker based on the token & the timeframe chosen.',
       url: 'https://morning-tracker.vercel.app',
       external: true,
-      gradient: 'var(--warning-gradient)',
-      features: ['Overall Bias Scores', 'Bias Tracking', 'Track History']
+      category: 'Mentality'
     },
     {
       title: 'Trade Assistant',
-      description: 'Engage in a conversational chat with an AI to plan your trades, analyze your strategy, and manage your positions.',
-      icon: '💬',
+      description: 'An assistant to guide you through trading decisions.',
       path: '/trade-chat',
-      gradient: 'var(--secondary-gradient)',
-      features: ['Pre-Trade Planning', 'Trade Management', 'Conversational AI', 'Strategy Review']
+      category: 'AI'
     },
   ];
 
@@ -168,7 +113,7 @@ function Home() {
   const topLosers = marketData?.top_losers ?? [];
   const mostActive = marketData?.most_active ?? [];
 
-  // Helpers
+  // Helper functions
   const formatPrice = (value) => {
     if (value === null || value === undefined) return '–';
     const num = Number(value);
@@ -184,6 +129,9 @@ function Home() {
     }
     return `$${str}`;
   };
+
+  const formatPercent = (pct) => `${pct > 0 ? '+' : ''}${pct.toFixed(2)}%`;
+
   const formatNumber = (num) => {
     if (num === null || num === undefined) return '–';
     const abs = Math.abs(num);
@@ -198,190 +146,169 @@ function Home() {
     }
     return num.toFixed(2);
   };
-  const formatPercent = (pct) => `${pct > 0 ? '+' : ''}${pct.toFixed(2)}%`;
 
   return (
     <Layout className="dashboard">
       <div className="home-container">
-        {/* Hero Section */}
+        
+        {/* Hero Section - Simplified */}
         <section className="hero-section animate-fade-in">
+          <Aurora
+            colorStops={["#ff9300", "#7c2a00", "#ad3e00"]}
+            blend={0.95}
+            amplitude={1.0}
+            speed={0.4}
+          />
           <div className="hero-content">
             <div className="hero-text">
               <h1 className="hero-title">
-                <span className="text-gradient">Everbloom Trading Portal</span>
-                <span className="hero-subtitle">Professional</span>
+                Everbloom Trading Dashboard
               </h1>
               <p className="hero-description">
-                Advanced market analysis platform providing real-time insights, 
-                comprehensive data visualization, and powerful trading tools.
+                Professional market analysis and trading tools for informed decision making.
               </p>
-              <div className="hero-actions">
-                <button className="btn btn-primary btn-large" onClick={handleStartScanning}>
-                  <span>Start Scanning</span>
-                  <span>🚀</span>
-                </button>
-                <button className="btn btn-outline btn-large">
-                  <span>View Demo</span>
-                  <span>▶️</span>
-                </button>
-              </div>
             </div>
-            <div className="hero-stats">
-              <div className="hero-stat">
-                <div className="stat-icon">⏰</div>
-                <div className="stat-info">
-                  <div className="stat-label">Stock Market Status</div>
-                  <div className={`stat-value ${marketStatus.toLowerCase()}`}>
-                    {marketStatus}
-                  </div>
-                </div>
-              </div>
-              <div className="hero-stat">
-                <div className="stat-icon">🕐</div>
-                <div className="stat-info">
-                  <div className="stat-label">Current Time</div>
-                  <div className="stat-value">
-                    {currentTime.toLocaleTimeString()}
-                  </div>
-                </div>
-              </div>
+          </div>
+          
+          {/* Market Status Cards - Centered */}
+          <div className="status-cards">
+            <div className="status-card">
+              <span className="status-label">Market Status</span>
+              <span className={`status-value ${marketStatus.toLowerCase()}`}>
+                {marketStatus}
+              </span>
+            </div>
+            <div className="status-card">
+              <span className="status-label">Current Time</span>
+              <span className="status-value">
+                {currentTime.toLocaleTimeString()}
+              </span>
             </div>
           </div>
         </section>
 
-        {/* Dashboard Endpoint Cards */}
-        <section className="stats-section animate-slide-up">
-          <div className="stats-grid">
-            {dashboardCards.map((card, index) => {
-              const cardContent = (
-                <>
-                  <div className="stat-card-header">
-                    <div className="stat-card-icon">{card.icon}</div>
-                    <div className="stat-card-title">{card.title}</div>
+        {/* Trading Tools Grid */}
+        <section className="tools-section">
+          <h2 className="section-title">Trading Tools</h2>
+          <div className="tools-grid">
+            {tradingTools.map((tool, index) => {
+              const toolContent = (
+                <div className="tool-card">
+                  <div className="tool-header">
+                    <h3 className="tool-title">{tool.title}</h3>
+                    <span className="tool-category">{tool.category}</span>
                   </div>
-                  <div className="stat-card-content">
-                    <div className="stat-card-value">{card.subtitle}</div>
-                  </div>
-                </>
+                  <p className="tool-description">{tool.description}</p>
+                </div>
               );
 
-              // Handle external link
-              if (card.external && card.url) {
+              if (tool.external && tool.url) {
                 return (
                   <a
                     key={index}
-                    href={card.url}
+                    href={tool.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className={`stat-card glass link-card ${highlightCards ? 'glare' : ''}`}
+                    className="tool-link"
                   >
-                    {cardContent}
+                    {toolContent}
                   </a>
                 );
               }
               
-              // If the card has a path, render it as a clickable link
-              if (card.path) {
+              if (tool.path) {
                 return (
                   <Link
                     key={index}
-                    to={card.path}
-                    className={`stat-card glass link-card ${highlightCards ? 'glare' : ''}`}
+                    to={tool.path}
+                    className="tool-link"
                   >
-                    {cardContent}
+                    {toolContent}
                   </Link>
                 );
               }
 
-              // Placeholder for future pages – intentionally left blank
               return (
-                <div key={index} className={`stat-card glass placeholder-card ${highlightCards ? 'glare' : ''}`}>
-                  {/* TODO: Endpoint card placeholder – replace when new page is ready */}
+                <div key={index} className="tool-card disabled">
+                  {toolContent}
                 </div>
               );
             })}
           </div>
         </section>
 
-        {/* Three-Column Market Data Layout */}
-        <section className="market-overview-section">
-          <h2 className="section-title">
-            <span className="text-gradient">Market Overview</span>
-          </h2>
-          <div className="market-columns">
-            {/* Top Gainers Column */}
+        {/* Market Overview */}
+        <section className="market-section">
+          <h2 className="section-title">Market Overview</h2>
+          <div className="market-grid">
+            
+            {/* Top Gainers */}
             <div className="market-column">
               <div className="column-header">
-                <h3 className="column-title">
-                  <span className="column-icon">📈</span>
-                  Top Gainers
-                </h3>
+                <h3 className="column-title">Top Gainers</h3>
               </div>
-              <div className="symbol-cards">
+              <div className="market-list">
                 {/* Loading & error states */}
                 {marketLoading && <div className="loading">Loading…</div>}
                 {marketError && <div className="error">Failed to load data</div>}
 
                 {!marketLoading && !marketError && topGainers.map((item, index) => (
-                  <div key={index} className="symbol-card card animate-slide-up">
-                    <div className="symbol-header">
-                      <span className="symbol-name">{item.symbol}</span>
-                      <span className="symbol-change positive">{formatPercent(item.price_change_percent)}</span>
+                  <div key={index} className="market-item">
+                    <div className="item-info">
+                      <span className="item-symbol">{item.symbol}</span>
+                      <span className="item-price">{formatPrice(item.close_current)}</span>
                     </div>
-                    <div className="symbol-price">{formatPrice(item.close_current)}</div>
-                    <div className="symbol-indicator positive"></div>
+                    <span className="item-change positive">
+                      {formatPercent(item.price_change_percent)}
+                    </span>
                   </div>
                 ))}
               </div>
             </div>
 
-            {/* Top Losers Column */}
+            {/* Top Losers */}
             <div className="market-column">
               <div className="column-header">
-                <h3 className="column-title">
-                  <span className="column-icon">📉</span>
-                  Top Losers
-                </h3>
+                <h3 className="column-title">Top Losers</h3>
               </div>
-              <div className="symbol-cards">
+              <div className="market-list">
                 {/* Loading & error states */}
                 {marketLoading && <div className="loading">Loading…</div>}
                 {marketError && <div className="error">Failed to load data</div>}
 
                 {!marketLoading && !marketError && topLosers.map((item, index) => (
-                  <div key={index} className="symbol-card card animate-slide-up">
-                    <div className="symbol-header">
-                      <span className="symbol-name">{item.symbol}</span>
-                      <span className="symbol-change negative">{formatPercent(item.price_change_percent)}</span>
+                  <div key={index} className="market-item">
+                    <div className="item-info">
+                      <span className="item-symbol">{item.symbol}</span>
+                      <span className="item-price">{formatPrice(item.close_current)}</span>
                     </div>
-                    <div className="symbol-price">{formatPrice(item.close_current)}</div>
-                    <div className="symbol-indicator negative"></div>
+                    <span className="item-change negative">
+                      {formatPercent(item.price_change_percent)}
+                    </span>
                   </div>
                 ))}
               </div>
             </div>
 
-            {/* Most Active Column */}
+            {/* Most Active */}
             <div className="market-column">
               <div className="column-header">
-                <h3 className="column-title">
-                  <span className="column-icon">🔥</span>
-                  Most Active
-                </h3>
+                <h3 className="column-title">Most Active</h3>
               </div>
-              <div className="symbol-cards">
+              <div className="market-list">
                 {/* Loading & error states */}
                 {marketLoading && <div className="loading">Loading…</div>}
                 {marketError && <div className="error">Failed to load data</div>}
 
                 {!marketLoading && !marketError && mostActive.map((item, index) => (
-                  <div key={index} className="symbol-card card animate-slide-up">
-                    <div className="symbol-header">
-                      <span className="symbol-name">{item.symbol}</span>
-                      <span className="symbol-volume">{formatNumber(item.volume_24h)}</span>
+                  <div key={index} className="market-item">
+                    <div className="item-info">
+                      <span className="item-symbol">{item.symbol}</span>
+                      <span className="item-price">{formatPrice(item.close_current)}</span>
                     </div>
-                    <div className="symbol-price">{formatPrice(item.close_current)}</div>
-                    <div className="symbol-indicator active"></div>
+                    <span className="item-volume">
+                      {formatNumber(item.volume_24h)}
+                    </span>
                   </div>
                 ))}
               </div>
@@ -389,93 +316,190 @@ function Home() {
           </div>
         </section>
 
-        {/* Feature Cards */}
+        {/* Platform Features */}
         <section className="features-section">
-          <h2 className="section-title">
-            <span className="text-gradient">Platform Features</span>
-          </h2>
+          <h2 className="section-title">Platform Features</h2>
           <div className="features-grid">
-            {featureCards.map((feature, index) => {
-              // Placeholder for upcoming features
-              if (!feature.path && !feature.external) {
-                return <div key={index} className="feature-card glass placeholder-card animate-slide-up"></div>;
-              }
+            
+            {/* TrendSpider */}
+            <div className="feature-card">
+              <div className="feature-header-section">
+                <h3 className="feature-title">TrendSpider</h3>
+              </div>
+              <div className="feature-description-section">
+                <p className="feature-description">
+                  Advanced EMA analysis with configurable periods, filter conditions, and export capabilities. Perfect for technical analysis workflows.
+                </p>
+              </div>
+              <div className="feature-list-section">
+                <ul className="feature-list">
+                  <li className="feature-item">
+                    <span className="feature-check">✓</span>
+                    Multiple EMA Periods
+                  </li>
+                  <li className="feature-item">
+                    <span className="feature-check">✓</span>
+                    Advanced Filtering
+                  </li>
+                  <li className="feature-item">
+                    <span className="feature-check">✓</span>
+                    Configuration Management
+                  </li>
+                  <li className="feature-item">
+                    <span className="feature-check">✓</span>
+                    CSV Export
+                  </li>
+                </ul>
+              </div>
+              <div className="feature-button-section">
+                <Link to="/trendspider" className="feature-btn">
+                  Explore TrendSpider
+                </Link>
+              </div>
+            </div>
 
-              const featureContent = (
-                <>
-                  <div className="feature-header">
-                    <div
-                      className="feature-icon"
-                      style={{ background: feature.gradient }}
-                    >
-                      {feature.icon}
-                    </div>
-                    <h3 className="feature-title">{feature.title}</h3>
-                  </div>
-                  <p className="feature-description">{feature.description}</p>
-                  <ul className="feature-list">
-                    {feature.features.map((item, itemIndex) => (
-                      <li key={itemIndex} className="feature-item">
-                        <span className="feature-check">✓</span>
-                        {item}
-                      </li>
-                    ))}
-                  </ul>
-                </>
-              );
+            {/* FDV Scanner */}
+            <div className="feature-card">
+              <div className="feature-header-section">
+                <h3 className="feature-title">FDV Scanner</h3>
+              </div>
+              <div className="feature-description-section">
+                <p className="feature-description">
+                  Analyze coins by Fully-Diluted Valuation. Filter by circulation %, export tickers, and stay ahead of supply unlocks.
+                </p>
+              </div>
+              <div className="feature-list-section">
+                <ul className="feature-list">
+                  <li className="feature-item">
+                    <span className="feature-check">✓</span>
+                    Threshold Filtering
+                  </li>
+                  <li className="feature-item">
+                    <span className="feature-check">✓</span>
+                    CSV Export
+                  </li>
+                  <li className="feature-item">
+                    <span className="feature-check">✓</span>
+                    Real-time Data
+                  </li>
+                </ul>
+              </div>
+              <div className="feature-button-section">
+                <Link to="/fully-diluted" className="feature-btn">
+                  Explore FDV Scanner
+                </Link>
+              </div>
+            </div>
 
-              // Handle external link
-              if (feature.external) {
-                return (
-                  <div key={index} className="feature-card glass animate-slide-up">
-                    {featureContent}
-                    <a href={feature.url} target="_blank" rel="noopener noreferrer" className="feature-btn btn btn-secondary">
-                      Explore {feature.title}
-                    </a>
-                  </div>
-                );
-              }
-              
-              // Render fully defined card
-              return (
-                <div key={index} className="feature-card glass animate-slide-up">
-                  {featureContent}
-                  <Link to={feature.path} className="feature-btn btn btn-secondary">
-                    Explore {feature.title}
-                  </Link>
-                </div>
-              );
-            })}
+            {/* Bias Tracker */}
+            <div className="feature-card">
+              <div className="feature-header-section">
+                <h3 className="feature-title">Bias Tracker</h3>
+              </div>
+              <div className="feature-description-section">
+                <p className="feature-description">
+                  Track your trading biases and performance with this powerful external tool. Fully integrated for a seamless experience.
+                </p>
+              </div>
+              <div className="feature-list-section">
+                <ul className="feature-list">
+                  <li className="feature-item">
+                    <span className="feature-check">✓</span>
+                    Overall Bias Scores
+                  </li>
+                  <li className="feature-item">
+                    <span className="feature-check">✓</span>
+                    Bias Tracking
+                  </li>
+                  <li className="feature-item">
+                    <span className="feature-check">✓</span>
+                    Track History
+                  </li>
+                </ul>
+              </div>
+              <div className="feature-button-section">
+                <a 
+                  href="https://morning-tracker.vercel.app" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="feature-btn"
+                >
+                  Explore Bias Tracker
+                </a>
+              </div>
+            </div>
+
+            {/* Trade Assistant */}
+            <div className="feature-card">
+              <div className="feature-header-section">
+                <h3 className="feature-title">Trade Assistant</h3>
+              </div>
+              <div className="feature-description-section">
+                <p className="feature-description">
+                  Engage in a conversational chat with an AI to plan your trades, analyze your strategy, and manage your positions.
+                </p>
+              </div>
+              <div className="feature-list-section">
+                <ul className="feature-list">
+                  <li className="feature-item">
+                    <span className="feature-check">✓</span>
+                    Pre-Trade Planning
+                  </li>
+                  <li className="feature-item">
+                    <span className="feature-check">✓</span>
+                    Trade Management
+                  </li>
+                  <li className="feature-item">
+                    <span className="feature-check">✓</span>
+                    Conversational AI
+                  </li>
+                  <li className="feature-item">
+                    <span className="feature-check">✓</span>
+                    Strategy Review
+                  </li>
+                </ul>
+              </div>
+              <div className="feature-button-section">
+                <Link to="/trade-chat" className="feature-btn">
+                  Explore Trade Assistant
+                </Link>
+              </div>
+            </div>
+
           </div>
         </section>
 
-        {/* Recent Activity */}
-        {recentPages.length > 0 && (
-          <section className="recent-section">
-            <h2 className="section-title">
-              <span className="text-gradient">Recent Activity</span>
-            </h2>
-            <div className="recent-grid">
-              {recentPages.map((page, index) => (
-                <div key={index} className="recent-card card">
-                  <div className="recent-icon">{page.icon}</div>
-                  <div className="recent-content">
-                    <h4 className="recent-title">{page.title}</h4>
-                    <p className="recent-time">
-                      {new Date(page.visitedAt).toLocaleString()}
-                    </p>
-                  </div>
-                  <button className="recent-btn btn btn-outline btn-small">
-                    Revisit
-                  </button>
-                </div>
-              ))}
-            </div>
-          </section>
-        )}
+        {/* Quick Actions */}
+        <section className="actions-section">
+          <h2 className="section-title">Quick Actions</h2>
+          <div className="actions-grid">
+            <Link to="/trendspider" className="action-card">
+              <h3 className="action-title">Start Analysis</h3>
+              <p className="action-description">Begin technical analysis with EMA scanner</p>
+            </Link>
+            <Link to="/fully-diluted" className="action-card">
+              <h3 className="action-title">Check Valuations</h3>
+              <p className="action-description">Review FDV metrics and circulation data</p>
+            </Link>
+            <a 
+              href="https://morning-tracker.vercel.app" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="action-card"
+            >
+              <h3 className="action-title">Track Performance</h3>
+              <p className="action-description">Monitor trading biases and results</p>
+            </a>
+            <Link to="/trade-chat" className="action-card">
+              <h3 className="action-title">Get Assistance</h3>
+              <p className="action-description">Chat with AI trading assistant</p>
+            </Link>
+          </div>
+        </section>
+
       </div>
     </Layout>
   );
 }
 
-export default Home; 
+export default Home;

@@ -15,26 +15,14 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: 
-    radial-gradient(circle at 20% 50%, rgba(102, 126, 234, 0.1) 0%, transparent 50%),
-    radial-gradient(circle at 80% 20%, rgba(118, 75, 162, 0.1) 0%, transparent 50%),
-    radial-gradient(circle at 40% 80%, rgba(100, 255, 218, 0.05) 0%, transparent 50%);
-  z-index: -2;
-  animation: backgroundFloat 20s ease-in-out infinite;
-}
-
-.verification-container .background-pattern::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  opacity: 0.02;
   background-image: 
-    linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+    radial-gradient(circle at 25% 25%, var(--text-accent) 1px, transparent 1px),
+    radial-gradient(circle at 75% 75%, var(--text-accent) 1px, transparent 1px);
   background-size: 50px 50px;
-  animation: gridMove 30s linear infinite;
+  background-position: 0 0, 25px 25px;
+  pointer-events: none;
+  z-index: -1;
 }
 
 .verification-content {
@@ -72,7 +60,7 @@
 
 .verification-header .logo-icon {
   font-size: 2.5rem;
-  filter: drop-shadow(0 0 20px rgba(100, 255, 218, 0.3));
+  color: var(--text-accent);
 }
 
 .verification-header .logo-text {
@@ -130,25 +118,23 @@
   width: 100%;
   padding: var(--spacing-md) var(--spacing-lg);
   padding-right: 3rem;
-  background: var(--input-bg);
+  background: var(--bg-card);
   border: 1px solid var(--border-primary);
   border-radius: var(--radius-md);
   color: var(--text-primary);
   font-size: 1rem;
   transition: all var(--transition-normal);
-  backdrop-filter: blur(10px);
 }
 
 .form-input:focus {
   outline: none;
   border-color: var(--accent-color);
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
-  background: var(--hover-bg);
+  background: var(--bg-card-hover);
 }
 
 .form-input.error {
-  border-color: var(--danger-color);
-  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+  border-color: var(--error-color);
+  background: var(--bg-card-hover);
 }
 
 .form-input::placeholder {
@@ -170,7 +156,7 @@
   align-items: center;
   gap: var(--spacing-xs);
   margin-top: var(--spacing-xs);
-  color: var(--danger-color);
+  color: var(--error-color);
   font-size: 0.875rem;
   font-weight: 500;
 }
